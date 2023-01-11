@@ -66,7 +66,7 @@ def getClickedTile(board):
         return row, col, board[row][col]
     else:
         print('Clicked border')
-
+        return 'border', 'border', 'border'
 
 def main():
     WINDOW.blit(images['v_border'], (0, 0))
