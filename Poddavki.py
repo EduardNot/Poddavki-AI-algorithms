@@ -38,15 +38,26 @@ def update_display(WIN, board, selectedPiece, possibleMoves):
             pygame.draw.rect(WINDOW, color, (x, y, TILE_WIDTH, TILE_WIDTH))
             # show move locations
             if (row, col) in possibleMoves:
-                WIN.blit(images['move'], (x + OFFSET, y + OFFSET))
+                WIN.blit(images['move'], (x + OFFSET_MOVE, y + OFFSET_MOVE))
             # add pieces
             if piece in ['w', 'wk', 'b', 'bk']:
-                WIN.blit(images[piece], (x + OFFSET, y + OFFSET))
+                WIN.blit(images[piece], (x + OFFSET_PIECE, y + OFFSET_PIECE))
     pygame.display.update()
 
 
 def getPossibleMoves(board, row, col):
-    pass  # TODO
+    piece = board[row][col]
+    possibleMoves = []
+    moves = []
+    if piece == 'b':
+        moves = [(row + 1, col - 1), (row + 1, col + 1)]
+    if piece == 'w':
+        moves = [(row - 1, col - 1), (row - 1, col + 1)]
+    for r, c in moves:
+        # print(r, c, board[r][c])
+        if 0 <= r <= 7 and 0 <= c <= 7 and board[r][c] == '':
+            possibleMoves.append((r, c))
+    return possibleMoves
 
 
 def isEnd(board, nextplayer):
@@ -67,6 +78,7 @@ def getClickedTile(board):
     else:
         print('Clicked border')
         return 'border', 'border', 'border'
+
 
 def main():
     WINDOW.blit(images['v_border'], (0, 0))
@@ -98,7 +110,8 @@ def main():
                 row, col, piece = getClickedTile(board)
                 if piece in ['w', 'b', 'bk', 'wk']:
                     selectedPiece = (row, col)
-                    # possibleMoves = getPossibleMoves(board, row, col)
+                    possibleMoves = getPossibleMoves(board, row, col)
+                    print(possibleMoves)
         update_display(WINDOW, board, selectedPiece, possibleMoves)
 
 
@@ -108,7 +121,8 @@ images = {val: pygame.image.load(f'assets/{val}.png') for val in ['b', 'bk', 'w'
 
 BOARD_SIZE = 880
 BORDER_WIDTH = 40
-OFFSET = 10
+OFFSET_PIECE = 10
+OFFSET_MOVE = 35
 TILE_WIDTH = 100
 
 white_tile = '#FFCE9E'
