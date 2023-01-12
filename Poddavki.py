@@ -33,9 +33,16 @@ def newBoard(board, moves):
     new_board = deepcopy(board)
     start_row, start_col = moves[0]
     end_row, end_col = moves[-1]
-    new_board[end_row][end_col] = new_board[start_row][start_col]
-    for row, col in moves[:-1]:
+    piece = new_board[start_row][start_col]
+
+    for row, col in moves:
+        if row == 0 and piece == 'w':
+            piece = 'wk'
+        if row == 7 and piece == 'b':
+            piece = 'bk'
         new_board[row][col] = ''
+
+    new_board[end_row][end_col] = piece
     return new_board
 
 
@@ -105,7 +112,6 @@ def getClickedTile(board):
     else:
         print('Clicked border')
         return 'border', 'border', 'border'
-
 
 
 def main():
