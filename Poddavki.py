@@ -54,8 +54,7 @@ def getRegularMoves(board, row, col):
     possibleMoves = []
     for row, col in moves:
         if isInBounds(row, col) and board[row][col] == '':
-            move = (startingLoc, (row, col))
-            possibleMoves.append({'board': newBoard(board, move), 'moves': move})
+            possibleMoves.append((startingLoc, (row, col)))
     return possibleMoves
 
 
@@ -108,9 +107,6 @@ def getClickedTile(board):
         return 'border', 'border', 'border'
 
 
-def getHighlightedTiles(moves):
-    return {val['moves'][-1]: val['board'] for val in moves}
-
 
 def main():
     WINDOW.blit(images['v_border'], (0, 0))
@@ -142,9 +138,9 @@ def main():
                 if piece in ['w', 'b', 'bk', 'wk']:
                     selectedPiece = (row, col)
                     possibleMoves = getRegularMoves(board, row, col)
-                    highlightedMoves = getHighlightedTiles(possibleMoves)
+                    highlightedMoves = {move[-1]: move for move in possibleMoves}
                 if (row, col) in highlightedMoves:
-                    board = highlightedMoves[(row, col)]
+                    board = newBoard(board, highlightedMoves[(row, col)])
                     selectedPiece = None
                     highlightedMoves = dict()
         update_display(WINDOW, board, selectedPiece, highlightedMoves)
