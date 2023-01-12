@@ -1,5 +1,6 @@
 import pygame
 import sys
+from copy import deepcopy
 
 
 def getCoords(location):
@@ -24,6 +25,48 @@ def getPieceLocations(board):
     return positions
 
 
+def isInBounds(row, col):
+    return 0 <= row <= 7 and 0 <= col <= 7
+
+
+def newBoard(board, moves):
+    new_board = deepcopy(board)
+    start_row, start_col = moves[0]
+    end_row, end_col = moves[-1]
+    new_board[end_row][end_col] = new_board[start_row][start_col]
+    for row, col in moves[:-1]:
+        new_board[row][col] = ''
+    return new_board
+
+
+def getRegularMoves(board, row, col):
+    moves = []
+    startingLoc = (row, col)
+    piece = board[row][col]
+    match piece:
+        case 'b':
+            moves = [(row + 1, col - 1), (row + 1, col + 1)]
+        case 'w':
+            moves = [(row - 1, col + 1), (row - 1, col - 1)]
+        case 'wk' | 'bk':
+            moves = [(row + 1, col - 1), (row + 1, col + 1), (row - 1, col + 1), (row - 1, col - 1)]
+
+    possibleMoves = []
+    for row, col in moves:
+        if isInBounds(row, col) and board[row][col] == '':
+            move = (startingLoc, (row, col))
+            possibleMoves.append({'board': newBoard(board, move), 'moves': move})
+    return possibleMoves
+
+
+def getSkips(board, row, col):
+    pass  # TODO
+
+
+def getAllMoves(board, player):
+    pass  # TODO
+
+
 def update_display(WIN, board, selectedPiece, possibleMoves):
     for row, rowValues in enumerate(board):
         for col, piece in enumerate(rowValues):
@@ -45,21 +88,6 @@ def update_display(WIN, board, selectedPiece, possibleMoves):
     pygame.display.update()
 
 
-def getPossibleMoves(board, row, col):
-    piece = board[row][col]
-    possibleMoves = []
-    moves = []
-    if piece == 'b':
-        moves = [(row + 1, col - 1), (row + 1, col + 1)]
-    if piece == 'w':
-        moves = [(row - 1, col - 1), (row - 1, col + 1)]
-    for r, c in moves:
-        # print(r, c, board[r][c])
-        if 0 <= r <= 7 and 0 <= c <= 7 and board[r][c] == '':
-            possibleMoves.append((r, c))
-    return possibleMoves
-
-
 def isEnd(board, nextplayer):
     pass  # TODO
 
@@ -73,11 +101,15 @@ def getClickedTile(board):
     if 40 <= x <= 840 and 40 <= y <= 840:
         row = (y - BORDER_WIDTH) // TILE_WIDTH
         col = (x - BORDER_WIDTH) // TILE_WIDTH
-        print(f'Clicked: {rowMove[row]}{colMove[col]}', row, col)
+        print(f'Clicked: {rowMove[row]}{colMove[col]} ({row}, {col})')
         return row, col, board[row][col]
     else:
         print('Clicked border')
         return 'border', 'border', 'border'
+
+
+def getHighlightedTiles(moves):
+    return {val['moves'][-1]: val['board'] for val in moves}
 
 
 def main():
@@ -98,8 +130,7 @@ def main():
     ]
 
     selectedPiece = None
-    possibleMoves = []
-
+    highlightedMoves = dict()
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -110,9 +141,13 @@ def main():
                 row, col, piece = getClickedTile(board)
                 if piece in ['w', 'b', 'bk', 'wk']:
                     selectedPiece = (row, col)
-                    possibleMoves = getPossibleMoves(board, row, col)
-                    print(possibleMoves)
-        update_display(WINDOW, board, selectedPiece, possibleMoves)
+                    possibleMoves = getRegularMoves(board, row, col)
+                    highlightedMoves = getHighlightedTiles(possibleMoves)
+                if (row, col) in highlightedMoves:
+                    board = highlightedMoves[(row, col)]
+                    selectedPiece = None
+                    highlightedMoves = dict()
+        update_display(WINDOW, board, selectedPiece, highlightedMoves)
 
 
 colMove = {0: 8, 1: 7, 2: 6, 3: 5, 4: 4, 5: 3, 6: 2, 7: 1}
