@@ -31,7 +31,7 @@ class Poddavki:
     def isInBounds(row, col):
         return 0 <= row <= 7 and 0 <= col <= 7
 
-    def applyMove(self, moves):
+    def applyMove(self, moves, return_board=True):
         new_board = list(map(list, self.board))
         start_row, start_col = moves[0]
         end_row, end_col = moves[-1]
@@ -45,7 +45,10 @@ class Poddavki:
             new_board[row][col] = ''
 
         new_board[end_row][end_col] = piece
-        self.board = tuple(map(tuple, new_board))
+        if return_board:
+            return tuple(map(tuple, new_board))
+        else:
+            self.board = tuple(map(tuple, new_board))
 
     def getRegularMoves(self, row, col):
         moves = []
@@ -74,16 +77,16 @@ class Poddavki:
         colMove = {0: 'a', 1: 'b', 2: 'c', 3: 'd', 4: 'e', 5: 'f', 6: 'g', 7: 'h'}
         result = ''
         if len(move) == 2:
-            delimiter = ', '
+            for row, col in move:
+                result += f'{colMove[col]}{rowMove[row]}-'
         else:
-            delimiter = ':'
-        for row, col in move:
-            result += f'{colMove[col]}{rowMove[row]}{delimiter}'
-        return result[:-len(delimiter)]
+            for row, col in move[::2]:
+                result += f'{colMove[col]}{rowMove[row]}:'
+        return result[:-1]
 
-    def getNextSkips(self, row, col):
+    def getNextSkips(self, board, row, col):
         startPosition = (row, col)
-        piece = self.board[row][col]
+        piece = board[row][col]
         locations = []
         if piece in ['b', 'bk']:
             opponentPieces = ['w', 'wk']
@@ -100,20 +103,19 @@ class Poddavki:
         skipMoves = []
         for regular_move, take_piece in locations:
             row, col = regular_move
-            if self.isInBounds(row, col) and self.board[row][col] in opponentPieces:
+            if self.isInBounds(row, col) and board[row][col] in opponentPieces:
                 row, col = take_piece
-                if self.isInBounds(row, col) and self.board[row][col] == '':
+                if self.isInBounds(row, col) and board[row][col] == '':
                     skipMoves.append((startPosition, regular_move, take_piece))
         return skipMoves
 
     def getSkips(self, row, col):
         possibleMoves = []
 
-        skips = self.getNextSkips(row, col)
+        skips = self.getNextSkips(self.board, row, col)
         while skips:
             move = skips.pop()
-            self.applyMove(move)
-            nextSkips = self.getNextSkips(*move[-1])
+            nextSkips = self.getNextSkips(self.applyMove(move), *move[-1])
             if nextSkips:
                 for startingPosition, enemyPiece, nextPosition in nextSkips:
                     skips.append(move + (enemyPiece, nextPosition))
@@ -141,10 +143,13 @@ class Poddavki:
 
     def switchPlayer(self):
         if self.to_move == 'white':
-            self.to_move = 'black'
+            return 'black'
         else:
-            self.to_move = 'white'
+            return 'white'
 
-    def isEnd(self, player):
-        availableMoves = self.getAllMoves(player)
+    def hasAvailableMoves(self):
+        availableMoves = self.getAllMoves(self.to_move)
         return len(availableMoves) > 0
+
+    def getWinner(self):
+        return self.switchPlayer()

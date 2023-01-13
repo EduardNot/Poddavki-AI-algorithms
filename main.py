@@ -1,3 +1,6 @@
+from os import environ
+
+environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'  # hide pygame welcome message
 import pygame
 import sys
 from Poddavki import Poddavki
@@ -56,44 +59,30 @@ def main():
     WINDOW.blit(h_border, (0, 0))
     WINDOW.blit(h_border, (BOARD_SIZE-BORDER_WIDTH, 0))
 
-    # board = (
-    #     ('', 'b', '', 'b', '', 'b', '', 'b'),
-    #     ('b', '', 'b', '', 'b', '', 'b', ''),
-    #     ('', 'b', '', 'b', '', 'b', '', 'b'),
-    #     ('', '', '', '', '', '', '', ''),
-    #     ('', '', '', '', '', '', '', ''),
-    #     ('w', '', 'w', '', 'w', '', 'w', ''),
-    #     ('', 'w', '', 'w', '', 'w', '', 'w'),
-    #     ('w', '', 'w', '', 'w', '', 'w', ''),
-    # )
-    board = Poddavki()
+    game = Poddavki()
     selectedPiece = None
     highlightedMoves = dict()
-    while True:
+    while game.hasAvailableMoves():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 print('EXIT SUCCESSFUL')
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
-                row, col, piece = getClickedTile(board.board)
+                row, col, piece = getClickedTile(game.board)
                 # TODO fix mandatory capture
-                if board.to_move == 'white' and piece in ['w', 'wk'] or board.to_move == 'black' and piece in ['b', 'bk']:
+                if game.to_move == 'white' and piece in ['w', 'wk'] or game.to_move == 'black' and piece in ['b', 'bk']:
                     selectedPiece = (row, col)
-                    possibleMoves = board.getPossibleMoves(row, col)
-                    # possibleMoves = getPossibleMoves(board, row, col)
+                    possibleMoves = game.getPossibleMoves(row, col)
                     highlightedMoves = {move[-1]: move for move in possibleMoves}
                 if (row, col) in highlightedMoves:
-                    print(board.to_move, board.translateMove(highlightedMoves[(row, col)]))
-                    # print(player, translateMove(highlightedMoves[(row, col)]))
-                    board.applyMove(highlightedMoves[(row, col)])
-                    # board = apply_move(board, highlightedMoves[(row, col)])
-                    board.switchPlayer()
-                    # player = switchPlayer(player)
+                    print(game.to_move, game.translateMove(highlightedMoves[(row, col)]))
+                    game.board = game.applyMove(highlightedMoves[(row, col)])
+                    game.to_move = game.switchPlayer()
                     selectedPiece = None
                     highlightedMoves = dict()
-        update_display(WINDOW, board.board, selectedPiece, highlightedMoves)
-
+        update_display(WINDOW, game.board, selectedPiece, highlightedMoves)
+    print('Winner:', game.getWinner())
 
 images = {val: pygame.image.load(f'assets/{val}.png') for val in ['b', 'bk', 'w', 'wk', 'move', 'v_border', 'h_border']}
 
