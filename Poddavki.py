@@ -29,7 +29,7 @@ def isInBounds(row, col):
     return 0 <= row <= 7 and 0 <= col <= 7
 
 
-def newBoard(board, moves):
+def move(board, moves):
     new_board = list(map(list, board))
     start_row, start_col = moves[0]
     end_row, end_col = moves[-1]
@@ -114,7 +114,7 @@ def getSkips(board, row, col):
     skips = getNextSkips(board, row, col)
     while skips:
         move = skips.pop()
-        nextSkips = getNextSkips(newBoard(board, move), *move[-1])
+        nextSkips = getNextSkips(move(board, move), *move[-1])
         if nextSkips:
             for startingPosition, enemyPiece, nextPosition in nextSkips:
                 skips.append(move + (enemyPiece, nextPosition))
@@ -207,7 +207,7 @@ def main():
                 if (row, col) in highlightedMoves:
                     print('Move:', board[selectedPiece[0]][selectedPiece[1]],
                           translateMove(highlightedMoves[(row, col)]))
-                    board = newBoard(board, highlightedMoves[(row, col)])
+                    board = move(board, highlightedMoves[(row, col)])
                     selectedPiece = None
                     highlightedMoves = dict()
         update_display(WINDOW, board, selectedPiece, highlightedMoves)
