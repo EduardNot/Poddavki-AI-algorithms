@@ -71,14 +71,14 @@ def main():
     availableMoves = game.getAllMoves(game.to_move)
     selectedPiece = None
     highlightedMoves = dict()
+    print(availableMoves)
     while availableMoves:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 print('EXIT SUCCESSFUL')
                 pygame.quit()
                 sys.exit()
-        if game.to_move == 'white' and PLAYER_WHITE == 'human' or game.to_move == 'black' and PLAYER_BLACK == 'human':
-            for event in pygame.event.get():
+            if game.to_move == 'white' and PLAYER_WHITE == 'human' or game.to_move == 'black' and PLAYER_BLACK == 'human':
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     row, col, piece = getClickedTile(game.board)
                     if game.to_move == 'white' and piece in ['w', 'wk'] or game.to_move == 'black' and piece in ['b',                                                                  'bk']:
@@ -86,22 +86,20 @@ def main():
                         highlightedMoves = {move[-1]: move for move in availableMoves if move[0] == selectedPiece}
                     if (row, col) in highlightedMoves:
                         print(game.to_move, game.translateMove(highlightedMoves[(row, col)]))
-                        game.board = game.applyMove(highlightedMoves[(row, col)])
-                        game.to_move = game.switchPlayer()
+                        game.applyMove(highlightedMoves[(row, col)])
                         selectedPiece = None
                         highlightedMoves = dict()
                         availableMoves = game.getAllMoves(game.to_move)
-        else:
-            start = time.time()
-            if game.to_move == 'white':
-                move = aiTurns[PLAYER_WHITE](game)
             else:
-                move = aiTurns[PLAYER_BLACK](game)
-            while time.time() - start < 0.2: pass
-            print(game.to_move, game.translateMove(move))
-            game.board = game.applyMove(move)
-            game.to_move = game.switchPlayer()
-            availableMoves = game.getAllMoves(game.to_move)
+                start = time.time()
+                if game.to_move == 'white':
+                    move = aiTurns[PLAYER_WHITE](game)
+                else:
+                    move = aiTurns[PLAYER_BLACK](game)
+                while time.time() - start < 0.2: pass
+                print(game.to_move, game.translateMove(move))
+                game.applyMove(move)
+                availableMoves = game.getAllMoves(game.to_move)
 
         update_display(WINDOW, game.board, selectedPiece, highlightedMoves)
     print('Winner:', game.getWinner())
@@ -123,7 +121,7 @@ pygame.display.set_caption('Checkers')
 
 aiTurns = {'random-ai': randomAiTurn}
 
-PLAYER_WHITE = 'random-ai'
+PLAYER_WHITE = 'human'
 PLAYER_BLACK = 'random-ai'
 
 main()

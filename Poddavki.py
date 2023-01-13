@@ -46,7 +46,11 @@ class Poddavki:
     def isInBounds(row, col):
         return 0 <= row <= 7 and 0 <= col <= 7
 
-    def applyMove(self, moves, return_board=True):
+    def applyMove(self, moves):
+        self.board = self.getNextBoardState(moves)
+        self.switchPlayer()
+
+    def getNextBoardState(self, moves):
         new_board = list(map(list, self.board))
         start_row, start_col = moves[0]
         end_row, end_col = moves[-1]
@@ -60,11 +64,8 @@ class Poddavki:
             new_board[row][col] = ''
 
         new_board[end_row][end_col] = piece
-        if return_board:
-            return tuple(map(tuple, new_board))
-        else:
-            self.board = tuple(map(tuple, new_board))
-            self.to_move = self.switchPlayer()
+        return tuple(map(tuple, new_board))
+
 
     def getRegularMoves(self, row, col):
         moves = []
@@ -131,7 +132,7 @@ class Poddavki:
         skips = self.getNextSkips(self.board, row, col)
         while skips:
             move = skips.pop()
-            nextSkips = self.getNextSkips(self.applyMove(move), *move[-1])
+            nextSkips = self.getNextSkips(self.getNextBoardState(move), *move[-1])
             if nextSkips:
                 for startingPosition, enemyPiece, nextPosition in nextSkips:
                     skips.append(move + (enemyPiece, nextPosition))
@@ -171,14 +172,14 @@ class Poddavki:
     def getNextBoardStates(self, player):
         boardStates = []
         for move in self.getAllMoves(player):
-            boardStates.append(self.applyMove(move))
+            boardStates.append(self.getNextBoardState(move))
         return boardStates
 
     def switchPlayer(self):
         if self.to_move == 'white':
-            return 'black'
+            self.to_move = 'black'
         else:
-            return 'white'
+            self.to_move =  'white'
 
     def hasAvailableMoves(self):
         availableMoves = self.getAllMoves(self.to_move)
