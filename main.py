@@ -75,7 +75,7 @@ def main():
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
-                row, col, piece = getClickedTile(board)
+                row, col, piece = getClickedTile(board.board)
                 # TODO fix mandatory capture
                 if player == 'white' and piece in ['w', 'wk'] or player == 'black' and piece in ['b', 'bk']:
                     selectedPiece = (row, col)
@@ -91,7 +91,7 @@ def main():
                     # player = switchPlayer(player)
                     selectedPiece = None
                     highlightedMoves = dict()
-        update_display(WINDOW, board, selectedPiece, highlightedMoves)
+        update_display(WINDOW, board.board, selectedPiece, highlightedMoves)
 
 
 images = {val: pygame.image.load(f'assets/{val}.png') for val in ['b', 'bk', 'w', 'wk', 'move', 'v_border', 'h_border']}
