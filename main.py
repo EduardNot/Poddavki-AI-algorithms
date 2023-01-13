@@ -122,7 +122,7 @@ pygame.init()
 WINDOW = pygame.display.set_mode((BOARD_SIZE, BOARD_SIZE))
 pygame.display.set_caption('Checkers')
 
-aiTurns = {'random-ai': randomAiTurn}
+aiTurns = {'random-ai': randomAiTurn, 'minmax-ai': None, 'monteCarlo-ai': None, 'minmax-ab-ai': None}
 
 PLAYER_WHITE = 'human'
 PLAYER_BLACK = 'random-ai'
