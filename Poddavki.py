@@ -31,7 +31,7 @@ class Poddavki:
     def isInBounds(row, col):
         return 0 <= row <= 7 and 0 <= col <= 7
 
-    def applyMove(self, moves):
+    def applyMove(self, moves, return_board=True):
         new_board = list(map(list, self.board))
         start_row, start_col = moves[0]
         end_row, end_col = moves[-1]
@@ -45,8 +45,11 @@ class Poddavki:
             new_board[row][col] = ''
 
         new_board[end_row][end_col] = piece
-        #self.board = tuple(map(tuple, new_board))
-        return tuple(map(tuple, new_board))
+        if return_board:
+            return tuple(map(tuple, new_board))
+        else:
+            self.board = tuple(map(tuple, new_board))
+
     def getRegularMoves(self, row, col):
         moves = []
         startingLoc = (row, col)
@@ -143,6 +146,7 @@ class Poddavki:
             return 'black'
         else:
             return 'white'
+
     def hasAvailableMoves(self):
         availableMoves = self.getAllMoves(self.to_move)
         return len(availableMoves) > 0
