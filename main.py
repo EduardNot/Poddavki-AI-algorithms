@@ -100,8 +100,12 @@ def main():
                 else:
                     move = aiTurns[PLAYER_BLACK](game)
                 while time.time() - start < 0.2: pass
-                print(game.to_move, game.translateMove(move))
-                game.applyMove(move)
+                if len(move) == 8:
+                    game.board = move
+                    game.switchPlayer()
+                else:
+                    print(game.to_move, game.translateMove(move))
+                    game.applyMove(move)
                 availableMoves = game.getPossibleMoves(game.to_move)
 
         update_display(WINDOW, game.board, selectedPiece, highlightedMoves)
