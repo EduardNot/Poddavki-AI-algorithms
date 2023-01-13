@@ -139,8 +139,17 @@ class Poddavki:
         for row, rowValues in enumerate(self.board):
             for col, piece in enumerate(rowValues):
                 if piece in pieces:
-                    availableMoves.append(self.getPossibleMoves(row, col))
+                    move = self.getPossibleMoves(row, col)
+                    if move:
+                        availableMoves.append(move)
         return availableMoves
+
+    def getNextBoardStates(self, player):
+        boardStates = []
+        for piece in self.getAllMoves(player):
+            for move in piece:
+                boardStates.append(self.applyMove(move))
+        return boardStates
 
     def switchPlayer(self):
         if self.to_move == 'white':
