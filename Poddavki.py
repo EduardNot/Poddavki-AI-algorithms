@@ -66,7 +66,6 @@ class Poddavki:
         new_board[end_row][end_col] = piece
         return tuple(map(tuple, new_board))
 
-
     def getRegularMoves(self, row, col):
         moves = []
         startingLoc = (row, col)
@@ -140,13 +139,7 @@ class Poddavki:
                 possibleMoves.append(move)
         return possibleMoves
 
-    def getPossibleMoves(self, row, col):
-        skips = self.getSkips(row, col)
-        if skips:
-            return skips
-        return self.getRegularMoves(row, col)
-
-    def getAllMoves(self, player):
+    def getPossibleMoves(self, player):
         availableMoves = []
         if player == 'white':
             pieces = ['w', 'wk']
@@ -171,7 +164,7 @@ class Poddavki:
 
     def getNextBoardStates(self, player):
         boardStates = []
-        for move in self.getAllMoves(player):
+        for move in self.getPossibleMoves(player):
             boardStates.append(self.getNextBoardState(move))
         return boardStates
 
@@ -179,18 +172,18 @@ class Poddavki:
         if self.to_move == 'white':
             self.to_move = 'black'
         else:
-            self.to_move =  'white'
+            self.to_move = 'white'
 
     def hasAvailableMoves(self):
-        availableMoves = self.getAllMoves(self.to_move)
+        availableMoves = self.getPossibleMoves(self.to_move)
         return len(availableMoves) > 0
 
     def getWinner(self):
         return self.to_move
 
     def get_outcome(self):
-        white = self.getAllMoves('white')
-        black = self.getAllMoves('black')
+        white = self.getPossibleMoves('white')
+        black = self.getPossibleMoves('black')
         if len(white) == 0 and len(black) == 0:
             return 'draw'
 

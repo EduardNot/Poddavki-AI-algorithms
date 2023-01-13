@@ -3,4 +3,4 @@ import Poddavki
 
 
 def getTurn(game: Poddavki):
-    return random.choice(game.getAllMoves(game.to_move))
+    return random.choice(game.getPossibleMoves(game.to_move))

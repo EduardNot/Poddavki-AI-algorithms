@@ -60,14 +60,14 @@ class MonteCarlo:
         if state.hasAvailableMoves():
             return False
 
-        children = [Node(move, parent) for move in state.getAllMoves(state.to_move)]
+        children = [Node(move, parent) for move in state.getPossibleMoves(state.to_move)]
         parent.add_children(children)
 
         return True
 
     def roll_out(self, state):
         while not state.hasAvailableMoves():
-            state.applyMove(random.choice(state.getAllMoves(state.to_move)))
+            state.applyMove(random.choice(state.getPossibleMoves(state.to_move)))
 
         return state.get_outcome()
 
