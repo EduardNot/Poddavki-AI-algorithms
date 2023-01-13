@@ -170,7 +170,7 @@ class Poddavki:
         return len(availableMoves) > 0
 
     def getWinner(self):
-        return self.switchPlayer()
+        return self.to_move
 
     def get_outcome(self):
         white = self.getAllMoves('white')
