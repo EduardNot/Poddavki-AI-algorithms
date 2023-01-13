@@ -123,10 +123,6 @@ def getSkips(board, row, col):
     return possibleMoves
 
 
-def getAllMoves(board, player):
-    pass  # TODO
-
-
 def getPossibleMoves(board, row, col):
     skips = getSkips(board, row, col)
     if skips:
@@ -155,12 +151,29 @@ def update_display(WIN, board, selectedPiece, possibleMoves):
     pygame.display.update()
 
 
-def isEnd(board, nextplayer):
-    pass  # TODO
+def getAllMoves(board, player):
+    availableMoves = []
+    if player == 'white':
+        pieces = ['w', 'wk']
+    else:
+        pieces = ['b', 'bk']
+    for row, rowValues in enumerate(board):
+        for col, piece in enumerate(rowValues):
+            if piece in pieces:
+                availableMoves.append(getPossibleMoves(board, row, col))
+    return availableMoves
 
 
-def getWinner(board):
-    pass  # TODO
+def switchPlayer(currentPlayer):
+    if currentPlayer == 'white':
+        return 'black'
+    else:
+        return 'white'
+
+
+def isEnd(board, player):
+    availableMoves = getAllMoves(board, player)
+    return len(availableMoves) > 0
 
 
 def getClickedTile(board):
@@ -192,6 +205,7 @@ def main():
 
     selectedPiece = None
     highlightedMoves = dict()
+    player = 'white'
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -200,14 +214,15 @@ def main():
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 row, col, piece = getClickedTile(board)
-                if piece in ['w', 'b', 'bk', 'wk']:
+                # TODO fix mandatory capture
+                if player == 'white' and piece in ['w', 'wk'] or player == 'black' and piece in ['b', 'bk']:
                     selectedPiece = (row, col)
                     possibleMoves = getPossibleMoves(board, row, col)
                     highlightedMoves = {move[-1]: move for move in possibleMoves}
                 if (row, col) in highlightedMoves:
-                    print('Move:', board[selectedPiece[0]][selectedPiece[1]],
-                          translateMove(highlightedMoves[(row, col)]))
+                    print(player, translateMove(highlightedMoves[(row, col)]))
                     board = newBoard(board, highlightedMoves[(row, col)])
+                    player = switchPlayer(player)
                     selectedPiece = None
                     highlightedMoves = dict()
         update_display(WINDOW, board, selectedPiece, highlightedMoves)
