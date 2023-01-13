@@ -138,7 +138,9 @@ class Poddavki:
         for row, rowValues in enumerate(self.board):
             for col, piece in enumerate(rowValues):
                 if piece in pieces:
-                    availableMoves.append(self.getPossibleMoves(row, col))
+                    move = self.getPossibleMoves(row, col)
+                    if move:
+                        availableMoves.append(move)
         return availableMoves
 
     def switchPlayer(self):
