@@ -14,9 +14,9 @@ class Poddavki:
             ('', 'w', '', 'w', '', 'w', '', 'w'),
             ('w', '', 'w', '', 'w', '', 'w', ''),
         )
-        self.to_move = 'w'
+        self.to_move = 'white'
 
-    def get_board(self):
+    def getBoard(self):
         return copy.deepcopy(self.board)
 
     def getPieceLocations(self):
@@ -31,7 +31,7 @@ class Poddavki:
     def isInBounds(row, col):
         return 0 <= row <= 7 and 0 <= col <= 7
 
-    def apply_move(self, moves):
+    def applyMove(self, moves):
         new_board = list(map(list, self.board))
         start_row, start_col = moves[0]
         end_row, end_col = moves[-1]
@@ -112,7 +112,7 @@ class Poddavki:
         skips = self.getNextSkips(row, col)
         while skips:
             move = skips.pop()
-            self.apply_move(move)
+            self.applyMove(move)
             nextSkips = self.getNextSkips(*move[-1])
             if nextSkips:
                 for startingPosition, enemyPiece, nextPosition in nextSkips:
@@ -140,10 +140,10 @@ class Poddavki:
         return availableMoves
 
     def switchPlayer(self):
-        if self.to_move == 'w':
-            self.to_move = 'b'
+        if self.to_move == 'white':
+            self.to_move = 'black'
         else:
-            self.to_move = 'w'
+            self.to_move = 'white'
 
     def isEnd(self, player):
         availableMoves = self.getAllMoves(player)

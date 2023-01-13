@@ -66,7 +66,6 @@ def main():
     board = Poddavki()
     selectedPiece = None
     highlightedMoves = dict()
-    player = 'white'
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -76,15 +75,15 @@ def main():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 row, col, piece = getClickedTile(board.board)
                 # TODO fix mandatory capture
-                if player == 'white' and piece in ['w', 'wk'] or player == 'black' and piece in ['b', 'bk']:
+                if board.to_move == 'white' and piece in ['w', 'wk'] or board.to_move == 'black' and piece in ['b', 'bk']:
                     selectedPiece = (row, col)
                     possibleMoves = board.getPossibleMoves(row, col)
                     # possibleMoves = getPossibleMoves(board, row, col)
                     highlightedMoves = {move[-1]: move for move in possibleMoves}
                 if (row, col) in highlightedMoves:
-                    print(player, board.translateMove(highlightedMoves[(row, col)]))
+                    print(board.to_move, board.translateMove(highlightedMoves[(row, col)]))
                     # print(player, translateMove(highlightedMoves[(row, col)]))
-                    board.apply_move(highlightedMoves[(row, col)])
+                    board.applyMove(highlightedMoves[(row, col)])
                     # board = apply_move(board, highlightedMoves[(row, col)])
                     board.switchPlayer()
                     # player = switchPlayer(player)
