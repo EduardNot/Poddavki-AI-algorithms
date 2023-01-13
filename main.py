@@ -81,8 +81,8 @@ def main():
                 print('EXIT SUCCESSFUL')
                 pygame.quit()
                 sys.exit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if game.to_move == 'white' and PLAYER_WHITE == 'human' or game.to_move == 'black' and PLAYER_BLACK == 'human':
+            if game.to_move == 'white' and PLAYER_WHITE == 'human' or game.to_move == 'black' and PLAYER_BLACK == 'human':
+                if event.type == pygame.MOUSEBUTTONDOWN:
                     row, col, piece = getClickedTile(game.board)
                     if game.to_move == 'white' and piece in ['w', 'wk'] or game.to_move == 'black' and piece in ['b','bk']:
                         selectedPiece = (row, col)
