@@ -1,6 +1,7 @@
 import pygame
 import sys
 from copy import deepcopy
+from tabulate import tabulate
 
 
 def getCoords(location):
@@ -30,10 +31,10 @@ def isInBounds(row, col):
 
 
 def newBoard(board, moves):
-    new_board = deepcopy(board)
+    new_board = list(map(list, board))
     start_row, start_col = moves[0]
     end_row, end_col = moves[-1]
-    piece = new_board[start_row][start_col]
+    piece = board[start_row][start_col]
 
     for row, col in moves:
         if row == 0 and piece == 'w':
@@ -43,7 +44,7 @@ def newBoard(board, moves):
         new_board[row][col] = ''
 
     new_board[end_row][end_col] = piece
-    return new_board
+    return tuple(map(tuple, new_board))
 
 
 def getRegularMoves(board, row, col):
@@ -65,12 +66,73 @@ def getRegularMoves(board, row, col):
     return possibleMoves
 
 
+def printBoard(board):
+    print(tabulate(board))
+
+
+def translateMove(move):
+    rowMove = {0: 8, 1: 7, 2: 6, 3: 5, 4: 4, 5: 3, 6: 2, 7: 1}
+    colMove = {0: 'a', 1: 'b', 2: 'c', 3: 'd', 4: 'e', 5: 'f', 6: 'g', 7: 'h'}
+    result = ''
+    if len(move) == 2:
+        delimiter = ', '
+    else:
+        delimiter = ':'
+    for row, col in move:
+        result += f'{colMove[col]}{rowMove[row]}{delimiter}'
+    return result[:-len(delimiter)]
+
+
+def getNextSkips(board, row, col):
+    startPosition = (row, col)
+    piece = board[row][col]
+    locations = []
+    if piece in ['b', 'bk']:
+        opponentPieces = ['w', 'wk']
+    else:
+        opponentPieces = ['b', 'bk']
+    match piece:
+        case 'b':
+            locations = [((row + 1, col - 1), (row + 2, col - 2)), ((row + 1, col + 1), (row + 2, col + 2))]
+        case 'w':
+            locations = [((row - 1, col + 1), (row - 2, col + 2)), ((row - 1, col - 1), (row - 2, col - 2))]
+        case 'wk' | 'bk':
+            locations = [((row + 1, col - 1), (row + 2, col - 2)), ((row + 1, col + 1), (row + 2, col + 2)),
+                         ((row - 1, col + 1), (row - 2, col + 2)), ((row - 1, col - 1), (row - 2, col - 2))]
+    skipMoves = []
+    for regular_move, take_piece in locations:
+        row, col = regular_move
+        if isInBounds(row, col) and board[row][col] in opponentPieces:
+            row, col = take_piece
+            if isInBounds(row, col) and board[row][col] == '':
+                skipMoves.append((startPosition, regular_move, take_piece))
+    return skipMoves
+
+
 def getSkips(board, row, col):
-    pass  # TODO
+    possibleMoves = []
+
+    skips = getNextSkips(board, row, col)
+    while skips:
+        move = skips.pop()
+        nextSkips = getNextSkips(newBoard(board, move), *move[-1])
+        if nextSkips:
+            for startingPosition, enemyPiece, nextPosition in nextSkips:
+                skips.append(move + (enemyPiece, nextPosition))
+        else:
+            possibleMoves.append(move)
+    return possibleMoves
 
 
 def getAllMoves(board, player):
     pass  # TODO
+
+
+def getPossibleMoves(board, row, col):
+    skips = getSkips(board, row, col)
+    if skips:
+        return skips
+    return getRegularMoves(board, row, col)
 
 
 def update_display(WIN, board, selectedPiece, possibleMoves):
@@ -107,10 +169,8 @@ def getClickedTile(board):
     if 40 <= x <= 840 and 40 <= y <= 840:
         row = (y - BORDER_WIDTH) // TILE_WIDTH
         col = (x - BORDER_WIDTH) // TILE_WIDTH
-        print(f'Clicked: {rowMove[row]}{colMove[col]} ({row}, {col})')
         return row, col, board[row][col]
     else:
-        print('Clicked border')
         return 'border', 'border', 'border'
 
 
@@ -120,16 +180,16 @@ def main():
     WINDOW.blit(images['h_border'], (0, 0))
     WINDOW.blit(images['h_border'], (840, 0))
 
-    board = [
-        ['', 'b', '', 'b', '', 'b', '', 'b'],
-        ['b', '', 'b', '', 'b', '', 'b', ''],
-        ['', 'b', '', 'b', '', 'b', '', 'b'],
-        ['', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', ''],
-        ['w', '', 'w', '', 'w', '', 'w', ''],
-        ['', 'w', '', 'w', '', 'w', '', 'w'],
-        ['w', '', 'w', '', 'w', '', 'w', ''],
-    ]
+    board = (
+        ('', 'b', '', 'b', '', 'b', '', 'b'),
+        ('b', '', 'b', '', 'b', '', 'b', ''),
+        ('', 'b', '', 'b', '', 'b', '', 'b'),
+        ('', '', '', '', '', '', '', ''),
+        ('', '', '', '', '', '', '', ''),
+        ('w', '', 'w', '', 'w', '', 'w', ''),
+        ('', 'w', '', 'w', '', 'w', '', 'w'),
+        ('w', '', 'w', '', 'w', '', 'w', ''),
+    )
 
     selectedPiece = None
     highlightedMoves = dict()
@@ -143,17 +203,17 @@ def main():
                 row, col, piece = getClickedTile(board)
                 if piece in ['w', 'b', 'bk', 'wk']:
                     selectedPiece = (row, col)
-                    possibleMoves = getRegularMoves(board, row, col)
+                    possibleMoves = getPossibleMoves(board, row, col)
                     highlightedMoves = {move[-1]: move for move in possibleMoves}
                 if (row, col) in highlightedMoves:
+                    print('Move:', board[selectedPiece[0]][selectedPiece[1]],
+                          translateMove(highlightedMoves[(row, col)]))
                     board = newBoard(board, highlightedMoves[(row, col)])
                     selectedPiece = None
                     highlightedMoves = dict()
         update_display(WINDOW, board, selectedPiece, highlightedMoves)
 
 
-colMove = {0: 8, 1: 7, 2: 6, 3: 5, 4: 4, 5: 3, 6: 2, 7: 1}
-rowMove = {0: 'a', 1: 'b', 2: 'c', 3: 'd', 4: 'e', 5: 'f', 6: 'g', 7: 'h'}
 images = {val: pygame.image.load(f'assets/{val}.png') for val in ['b', 'bk', 'w', 'wk', 'move', 'v_border', 'h_border']}
 
 BOARD_SIZE = 880
