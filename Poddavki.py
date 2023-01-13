@@ -49,6 +49,7 @@ class Poddavki:
             return tuple(map(tuple, new_board))
         else:
             self.board = tuple(map(tuple, new_board))
+            self.to_move = self.switchPlayer()
 
     def getRegularMoves(self, row, col):
         moves = []
@@ -153,3 +154,11 @@ class Poddavki:
 
     def getWinner(self):
         return self.switchPlayer()
+
+    def get_outcome(self):
+        white = self.getAllMoves('white')
+        black = self.getAllMoves('black')
+        if len(white) == 0 and len(black) == 0:
+            return 'draw'
+
+        return 'white' if len(white) == 0 else 'black'
