@@ -45,7 +45,7 @@ class Poddavki:
             new_board[row][col] = ''
 
         new_board[end_row][end_col] = piece
-        self.board = new_board
+        self.board = tuple(map(tuple, new_board))
 
     def getRegularMoves(self, row, col):
         moves = []
