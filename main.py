@@ -101,8 +101,11 @@ def main():
                     move = aiTurns[PLAYER_BLACK](game)
                 while time.time() - start < 0.2: pass
                 if len(move) == 8:
-                    game.board = move
+                    for moves in game.getPossibleMoves(game.to_move):
+                        if move == game.getNextBoardState(moves):
+                            print(game.to_move, game.translateMove(moves))
                     game.switchPlayer()
+                    game.board = move
                 else:
                     print(game.to_move, game.translateMove(move))
                     game.applyMove(move)
