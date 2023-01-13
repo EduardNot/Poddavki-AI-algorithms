@@ -1,5 +1,3 @@
-import time
-from os import environ
 from Poddavki import Poddavki
 from RandomAI import getTurn as randomAiTurn
 
