@@ -1,3 +1,6 @@
+from os import environ
+
+environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'  # hide pygame welcome message
 import pygame
 import sys
 from Poddavki import Poddavki
