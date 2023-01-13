@@ -74,12 +74,12 @@ class Poddavki:
         colMove = {0: 'a', 1: 'b', 2: 'c', 3: 'd', 4: 'e', 5: 'f', 6: 'g', 7: 'h'}
         result = ''
         if len(move) == 2:
-            delimiter = ', '
+            for row, col in move:
+                result += f'{colMove[col]}{rowMove[row]}-'
         else:
-            delimiter = ':'
-        for row, col in move:
-            result += f'{colMove[col]}{rowMove[row]}{delimiter}'
-        return result[:-len(delimiter)]
+            for row, col in move[::2]:
+                result += f'{colMove[col]}{rowMove[row]}:'
+        return result[:-1]
 
     def getNextSkips(self, board, row, col):
         startPosition = (row, col)
