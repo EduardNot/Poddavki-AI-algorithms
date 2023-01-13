@@ -53,7 +53,6 @@ def main():
     WINDOW.blit(images['h_border'], (0, 0))
     WINDOW.blit(images['h_border'], (840, 0))
 
-    board = Poddavki()
     # board = (
     #     ('', 'b', '', 'b', '', 'b', '', 'b'),
     #     ('b', '', 'b', '', 'b', '', 'b', ''),
@@ -64,7 +63,7 @@ def main():
     #     ('', 'w', '', 'w', '', 'w', '', 'w'),
     #     ('w', '', 'w', '', 'w', '', 'w', ''),
     # )
-
+    board = Poddavki()
     selectedPiece = None
     highlightedMoves = dict()
     player = 'white'
