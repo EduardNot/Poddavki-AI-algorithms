@@ -45,8 +45,8 @@ class Poddavki:
             new_board[row][col] = ''
 
         new_board[end_row][end_col] = piece
-        self.board = tuple(map(tuple, new_board))
-
+        #self.board = tuple(map(tuple, new_board))
+        return tuple(map(tuple, new_board))
     def getRegularMoves(self, row, col):
         moves = []
         startingLoc = (row, col)
@@ -81,9 +81,9 @@ class Poddavki:
             result += f'{colMove[col]}{rowMove[row]}{delimiter}'
         return result[:-len(delimiter)]
 
-    def getNextSkips(self, row, col):
+    def getNextSkips(self, board, row, col):
         startPosition = (row, col)
-        piece = self.board[row][col]
+        piece = board[row][col]
         locations = []
         if piece in ['b', 'bk']:
             opponentPieces = ['w', 'wk']
@@ -100,20 +100,21 @@ class Poddavki:
         skipMoves = []
         for regular_move, take_piece in locations:
             row, col = regular_move
-            if self.isInBounds(row, col) and self.board[row][col] in opponentPieces:
+            if self.isInBounds(row, col) and board[row][col] in opponentPieces:
                 row, col = take_piece
-                if self.isInBounds(row, col) and self.board[row][col] == '':
+                if self.isInBounds(row, col) and board[row][col] == '':
                     skipMoves.append((startPosition, regular_move, take_piece))
         return skipMoves
 
     def getSkips(self, row, col):
         possibleMoves = []
 
-        skips = self.getNextSkips(row, col)
+        skips = self.getNextSkips(self.board, row, col)
         while skips:
             move = skips.pop()
-            self.applyMove(move)
-            nextSkips = self.getNextSkips(*move[-1])
+            #self.applyMove(move)
+            nextSkips = self.getNextSkips(self.applyMove(move), *move[-1])
+            #nextSkips = self.getNextSkips(*move[-1])
             if nextSkips:
                 for startingPosition, enemyPiece, nextPosition in nextSkips:
                     skips.append(move + (enemyPiece, nextPosition))
