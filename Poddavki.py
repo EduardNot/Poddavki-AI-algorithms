@@ -112,9 +112,7 @@ class Poddavki:
         skips = self.getNextSkips(self.board, row, col)
         while skips:
             move = skips.pop()
-            #self.applyMove(move)
             nextSkips = self.getNextSkips(self.applyMove(move), *move[-1])
-            #nextSkips = self.getNextSkips(*move[-1])
             if nextSkips:
                 for startingPosition, enemyPiece, nextPosition in nextSkips:
                     skips.append(move + (enemyPiece, nextPosition))

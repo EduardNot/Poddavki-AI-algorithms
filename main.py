@@ -53,16 +53,6 @@ def main():
     WINDOW.blit(images['h_border'], (0, 0))
     WINDOW.blit(images['h_border'], (840, 0))
 
-    # board = (
-    #     ('', 'b', '', 'b', '', 'b', '', 'b'),
-    #     ('b', '', 'b', '', 'b', '', 'b', ''),
-    #     ('', 'b', '', 'b', '', 'b', '', 'b'),
-    #     ('', '', '', '', '', '', '', ''),
-    #     ('', '', '', '', '', '', '', ''),
-    #     ('w', '', 'w', '', 'w', '', 'w', ''),
-    #     ('', 'w', '', 'w', '', 'w', '', 'w'),
-    #     ('w', '', 'w', '', 'w', '', 'w', ''),
-    # )
     game = Poddavki()
     selectedPiece = None
     highlightedMoves = dict()
@@ -78,13 +68,10 @@ def main():
                 if game.to_move == 'white' and piece in ['w', 'wk'] or game.to_move == 'black' and piece in ['b', 'bk']:
                     selectedPiece = (row, col)
                     possibleMoves = game.getPossibleMoves(row, col)
-                    # possibleMoves = getPossibleMoves(board, row, col)
                     highlightedMoves = {move[-1]: move for move in possibleMoves}
                 if (row, col) in highlightedMoves:
                     print(game.to_move, game.translateMove(highlightedMoves[(row, col)]))
-                    # print(player, translateMove(highlightedMoves[(row, col)]))
                     game.board = game.applyMove(highlightedMoves[(row, col)])
-                    # board = apply_move(board, highlightedMoves[(row, col)])
                     game.switchPlayer()
                     # player = switchPlayer(player)
                     selectedPiece = None
