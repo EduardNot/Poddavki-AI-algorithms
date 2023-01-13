@@ -140,10 +140,12 @@ class Poddavki:
 
     def switchPlayer(self):
         if self.to_move == 'white':
-            self.to_move = 'black'
+            return 'black'
         else:
-            self.to_move = 'white'
-
-    def isEnd(self, player):
-        availableMoves = self.getAllMoves(player)
+            return 'white'
+    def hasAvailableMoves(self):
+        availableMoves = self.getAllMoves(self.to_move)
         return len(availableMoves) > 0
+
+    def getWinner(self):
+        return self.switchPlayer()

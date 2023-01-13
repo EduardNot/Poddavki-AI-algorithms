@@ -59,7 +59,7 @@ def main():
     game = Poddavki()
     selectedPiece = None
     highlightedMoves = dict()
-    while True:
+    while game.hasAvailableMoves():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 print('EXIT SUCCESSFUL')
@@ -75,12 +75,11 @@ def main():
                 if (row, col) in highlightedMoves:
                     print(game.to_move, game.translateMove(highlightedMoves[(row, col)]))
                     game.board = game.applyMove(highlightedMoves[(row, col)])
-                    game.switchPlayer()
-                    # player = switchPlayer(player)
+                    game.to_move = game.switchPlayer()
                     selectedPiece = None
                     highlightedMoves = dict()
         update_display(WINDOW, game.board, selectedPiece, highlightedMoves)
-
+    print('Winner:', game.getWinner())
 
 images = {val: pygame.image.load(f'assets/{val}.png') for val in ['b', 'bk', 'w', 'wk', 'move', 'v_border', 'h_border']}
 
