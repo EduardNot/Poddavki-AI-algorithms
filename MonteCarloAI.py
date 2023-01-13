@@ -3,6 +3,8 @@ import copy
 import random
 import time
 
+from Poddavki import Poddavki
+
 
 # https://www.harrycodes.com/blog/monte-carlo-tree-search
 class Node:
@@ -26,8 +28,8 @@ class Node:
 
 
 class MonteCarlo:
-    def __init__(self, board):
-        self.root_state = copy.deepcopy(board)
+    def __init__(self, state=Poddavki()):
+        self.root_state = copy.deepcopy(state)
         self.root = Node(None, None)
         self.run_time = 0
         self.node_count = 0
@@ -50,22 +52,22 @@ class MonteCarlo:
 
         if self.expand(node, state):
             node = random.choice(list(node.children.values()))
-            state.move(node.move)
+            state.applyMove(node.move, return_board=False)
 
         return node, state
 
     def expand(self, parent, state):
-        if state.game_over():
+        if state.hasAvailableMoves():
             return False
 
-        children = [Node(move, parent) for move in state.get_legal_moves()]
+        children = [Node(move, parent) for move in state.getAllMoves(state.to_move)]
         parent.add_children(children)
 
         return True
 
     def roll_out(self, state):
-        while not state.game_over():
-            state.move(random.choice(state.get_legal_moves()))
+        while not state.hasAvailableMoves():
+            state.applyMove(random.choice(state.getAllMoves(state.to_move)))
 
         return state.get_outcome()
 
@@ -83,7 +85,7 @@ class MonteCarlo:
             else:
                 reward = 1 - reward
 
-    def search(self, time_limit: int):
+    def search(self, time_limit):
         start_time = time.process_time()
 
         num_rollouts = 0
@@ -98,7 +100,7 @@ class MonteCarlo:
         self.num_rollouts = num_rollouts
 
     def best_move(self):
-        if self.root_state.game_over():
+        if self.root_state.hasAvailableMoves():
             return -1
 
         max_value = max(self.root.children.values(), key=lambda n: n.N).N
@@ -107,13 +109,15 @@ class MonteCarlo:
 
         return best_child.move
 
-    def move(self, move):
+    def mc_move(self, move):
         if move in self.root.children:
-            self.root_state.move(move)
+            self.root_state.applyMove(move)
+            # self.root_state.move(move)
             self.root = self.root.children[move]
             return
 
-        self.root_state.move(move)
+        # self.root_state.move(move)
+        self.root_state.applyMove(move)
         self.root = Node(None, None)
 
     def statistics(self):
