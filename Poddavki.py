@@ -16,16 +16,31 @@ class Poddavki:
         )
         self.to_move = 'white'
 
+    def __deepcopy__(self, memo):
+        cls = self.__class__
+        result = cls.__new__(cls)
+        memo[id(self)] = result
+        for k, v in self.__dict__.items():
+            setattr(result, k, v[:])
+        return result
+
     def getBoard(self):
         return copy.deepcopy(self.board)
 
-    def getPieceLocations(self):
+    def getPieceLocations(self, type='all'):
         positions = []
         for row, rowValues in enumerate(self.board):
             for col, piece in enumerate(rowValues):
-                if piece in ['b', 'bk', 'w', 'wk']:
+                if type == 'all' and piece in ['b', 'bk', 'w', 'wk']:
+                    positions.append((row, col))
+                elif type == 'white' and piece in ['w', 'wk']:
+                    positions.append((row, col))
+                elif type == 'black' and piece in ['b', 'bk']:
                     positions.append((row, col))
         return positions
+
+    def getPlayer(self):
+        return self.to_move
 
     @staticmethod
     def isInBounds(row, col):
