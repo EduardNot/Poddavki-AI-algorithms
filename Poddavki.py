@@ -162,7 +162,7 @@ class Poddavki:
                                 availableMoves.append(move)
         return availableMoves
 
-    def getNextBoardStates(self, player):
+    def getPossibleBoardStates(self, player):
         boardStates = []
         for move in self.getPossibleMoves(player):
             boardStates.append(self.getNextBoardState(move))
