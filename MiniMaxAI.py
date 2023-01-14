@@ -1,12 +1,12 @@
-import copy
 import Poddavki
 
+
 def getTurn(game: Poddavki):
-    return move(game, game.getPlayer(), 3, True)
+    return move(game, game.getPlayer(), 4, True)
 
 
 def move(game, color, depth, alphabeta):
-    colors = ['white', 'black']
+    colors = ('white', 'black')
     _, move = minimax(game, True, depth, alphabeta, 0, colors if color == 'white' else colors[::-1])
     return move
             
@@ -21,9 +21,10 @@ def minimax(game, maxPlayer, depth, alphabeta, prevEval, colors):
     moves = game.getPossibleMoves(colors[0] if maxPlayer else colors[1])
     
     for move in moves:
-        if alphabeta and (maxPlayer and prevEval < best[0] or not maxPlayer and prevEval > best[0]):
+        if alphabeta and (maxPlayer and prevEval <= best[0] or not maxPlayer and prevEval >= best[0]):
             break
-        gameCopy = copy.deepcopy(game)
+
+        gameCopy = game.copyGame()
         gameCopy.applyMove(move)
         eval = minimax(gameCopy, not maxPlayer, depth if maxPlayer else depth-1, alphabeta, best[0], colors)
         

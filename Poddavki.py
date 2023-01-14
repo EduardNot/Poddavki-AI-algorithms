@@ -16,14 +16,6 @@ class Poddavki:
         )
         self.to_move = 'white'
 
-    def __deepcopy__(self, memo):
-        cls = self.__class__
-        result = cls.__new__(cls)
-        memo[id(self)] = result
-        for k, v in self.__dict__.items():
-            setattr(result, k, v[:])
-        return result
-
     def getBoard(self):
         return copy.deepcopy(self.board)
 
@@ -42,6 +34,12 @@ class Poddavki:
     def getPlayer(self):
         return self.to_move
 
+    def copyGame(self):
+        new_game = Poddavki()
+        new_game.board = self.board
+        new_game.to_move = self.to_move
+        return new_game
+
     @staticmethod
     def isInBounds(row, col):
         return 0 <= row <= 7 and 0 <= col <= 7
@@ -51,7 +49,7 @@ class Poddavki:
         self.switchPlayer()
 
     def getNextBoardState(self, moves):
-        new_board = list(map(list, self.board))
+        new_board = [[*row] for row in self.board]
         start_row, start_col = moves[0]
         end_row, end_col = moves[-1]
         piece = self.board[start_row][start_col]
