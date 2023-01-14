@@ -75,6 +75,7 @@ def main():
     availableMoves = game.getPossibleMoves(game.to_move)
     selectedPiece = None
     highlightedMoves = dict()
+    shouldUpdateBoard = True
     while availableMoves:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -87,12 +88,15 @@ def main():
                     if game.to_move == 'white' and piece in ['w', 'wk'] or game.to_move == 'black' and piece in ['b','bk']:
                         selectedPiece = (row, col)
                         highlightedMoves = {move[-1]: move for move in availableMoves if move[0] == selectedPiece}
+                        shouldUpdateBoard = True
                     if (row, col) in highlightedMoves:
                         print(game.to_move, game.translateMove(highlightedMoves[(row, col)]))
                         game.applyMove(highlightedMoves[(row, col)])
                         selectedPiece = None
                         highlightedMoves = dict()
                         availableMoves = game.getPossibleMoves(game.to_move)
+                        shouldUpdateBoard = True
+
             else:
                 start = time.time()
                 if game.to_move == 'white':
@@ -109,16 +113,18 @@ def main():
                     print(game.to_move, game.translateMove(move))
                     game.applyMove(move)
                     availableMoves = game.getPossibleMoves(game.to_move)
+                    shouldUpdateBoard = True
                 else:
                     print('invalid move')
-
-        update_display(WINDOW, game.board, selectedPiece, highlightedMoves)
+        if shouldUpdateBoard:
+            update_display(WINDOW, game.board, selectedPiece, highlightedMoves)
+            shouldUpdateBoard = False
     print('Winner:', game.getWinner())
 
 
 images = {val: pygame.image.load(f'assets/{val}.png') for val in ['b', 'bk', 'w', 'wk', 'move', 'v_border', 'h_border']}
 
-SMALL = False
+SMALL = True
 
 BOARD_SIZE = 640 if SMALL else 880
 BORDER_WIDTH = 40
