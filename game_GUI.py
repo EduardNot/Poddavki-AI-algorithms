@@ -3,7 +3,7 @@ from os import environ
 from RandomAI import getTurn as randomAiTurn
 
 # from MonteCarloAI import getTurn as monteCarloTurn
-# from MiniMaxAI import getTurn as minMaxTurn
+from MiniMaxAI import getTurn as minMaxTurn
 
 
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'  # hide pygame welcome message
@@ -129,9 +129,9 @@ pygame.init()
 WINDOW = pygame.display.set_mode((BOARD_SIZE, BOARD_SIZE))
 pygame.display.set_caption('Checkers')
 
-aiTurns = {'random-ai': randomAiTurn, 'minmax-ai': None, 'monteCarlo-ai': None, 'minmax-ab-ai': None}
+aiTurns = {'random-ai': randomAiTurn, 'minmax-ai': minMaxTurn, 'monteCarlo-ai': None, 'minmax-ab-ai': None}
 
 PLAYER_WHITE = 'human'
-PLAYER_BLACK = 'random-ai'
+PLAYER_BLACK = 'minmax-ai'
 
 main()
