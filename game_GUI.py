@@ -101,15 +101,16 @@ def main():
                     move = aiTurns[PLAYER_BLACK](game)
                 while time.time() - start < 0.2: pass
                 if len(move) == 8:
-                    for moves in game.getPossibleMoves(game.to_move):
-                        if move == game.getNextBoardState(moves):
-                            print(game.to_move, game.translateMove(moves))
-                    game.switchPlayer()
-                    game.board = move
-                else:
+                    for moveList in game.getPossibleMoves(game.to_move):
+                        if move == game.getNextBoardState(moveList):
+                            move = moveList
+                            break
+                if move in availableMoves:
                     print(game.to_move, game.translateMove(move))
                     game.applyMove(move)
-                availableMoves = game.getPossibleMoves(game.to_move)
+                    availableMoves = game.getPossibleMoves(game.to_move)
+                else:
+                    print('invalid move')
 
         update_display(WINDOW, game.board, selectedPiece, highlightedMoves)
     print('Winner:', game.getWinner())
@@ -117,7 +118,7 @@ def main():
 
 images = {val: pygame.image.load(f'assets/{val}.png') for val in ['b', 'bk', 'w', 'wk', 'move', 'v_border', 'h_border']}
 
-SMALL = True
+SMALL = False
 
 BOARD_SIZE = 640 if SMALL else 880
 BORDER_WIDTH = 40
