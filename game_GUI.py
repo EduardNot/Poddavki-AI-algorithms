@@ -75,6 +75,7 @@ def main():
     availableMoves = game.getPossibleMoves(game.to_move)
     selectedPiece = None
     highlightedMoves = dict()
+    shouldUpdateBoard = True
     while availableMoves:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -87,12 +88,15 @@ def main():
                     if game.to_move == 'white' and piece in ['w', 'wk'] or game.to_move == 'black' and piece in ['b','bk']:
                         selectedPiece = (row, col)
                         highlightedMoves = {move[-1]: move for move in availableMoves if move[0] == selectedPiece}
+                        shouldUpdateBoard = True
                     if (row, col) in highlightedMoves:
                         print(game.to_move, game.translateMove(highlightedMoves[(row, col)]))
                         game.applyMove(highlightedMoves[(row, col)])
                         selectedPiece = None
                         highlightedMoves = dict()
                         availableMoves = game.getPossibleMoves(game.to_move)
+                        shouldUpdateBoard = True
+
             else:
                 start = time.time()
                 if game.to_move == 'white':
@@ -101,17 +105,20 @@ def main():
                     move = aiTurns[PLAYER_BLACK](game)
                 while time.time() - start < 0.2: pass
                 if len(move) == 8:
-                    for moves in game.getPossibleMoves(game.to_move):
-                        if move == game.getNextBoardState(moves):
-                            print(game.to_move, game.translateMove(moves))
-                    game.switchPlayer()
-                    game.board = move
-                else:
+                    for moveList in game.getPossibleMoves(game.to_move):
+                        if move == game.getNextBoardState(moveList):
+                            move = moveList
+                            break
+                if move in availableMoves:
                     print(game.to_move, game.translateMove(move))
                     game.applyMove(move)
-                availableMoves = game.getPossibleMoves(game.to_move)
-
-        update_display(WINDOW, game.board, selectedPiece, highlightedMoves)
+                    availableMoves = game.getPossibleMoves(game.to_move)
+                    shouldUpdateBoard = True
+                else:
+                    print('invalid move')
+        if shouldUpdateBoard:
+            update_display(WINDOW, game.board, selectedPiece, highlightedMoves)
+            shouldUpdateBoard = False
     print('Winner:', game.getWinner())
 
 

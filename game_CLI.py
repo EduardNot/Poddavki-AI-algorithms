@@ -13,16 +13,16 @@ def main():
         else:
             move = aiTurns[PLAYER_BLACK](game)
         if len(move) == 8:
-            for moves in game.getPossibleMoves(game.to_move):
-                if move == game.getNextBoardState(moves):
-                    print(game.to_move, game.translateMove(moves))
-            game.switchPlayer()
-            game.board = move
-        else:
+            for moveList in game.getPossibleMoves(game.to_move):
+                if move == game.getNextBoardState(moveList):
+                    move = moveList
+                    break
+        if move in availableMoves:
             print(game.to_move, game.translateMove(move))
             game.applyMove(move)
-        availableMoves = game.getPossibleMoves(game.to_move)
-
+            availableMoves = game.getPossibleMoves(game.to_move)
+        else:
+            print('invalid move')
     print('Winner:', game.getWinner())
 
 
