@@ -8,7 +8,7 @@ from Poddavki import Poddavki
 
 # https://www.harrycodes.com/blog/monte-carlo-tree-search
 class Node:
-    def __int__(self, move, parent, explore=1):
+    def __init__(self, move, parent, explore=1):
         self.move = move
         self.parent = parent
         self.N = 0
@@ -45,19 +45,19 @@ class MonteCarlo:
             max_nodes = [n for n in children if n.value() == max_value]
 
             node = random.choice(max_nodes)
-            state.move(node.move)
+            state.applyMove(node.move)
 
             if node.N == 0:
                 return node, state
 
         if self.expand(node, state):
             node = random.choice(list(node.children.values()))
-            state.applyMove(node.move, return_board=False)
+            state.applyMove(node.move)
 
         return node, state
 
     def expand(self, parent, state):
-        if state.hasAvailableMoves():
+        if not state.hasAvailableMoves():
             return False
 
         children = [Node(move, parent) for move in state.getPossibleMoves(state.to_move)]
@@ -66,7 +66,7 @@ class MonteCarlo:
         return True
 
     def roll_out(self, state):
-        while not state.hasAvailableMoves():
+        while state.hasAvailableMoves():
             state.applyMove(random.choice(state.getPossibleMoves(state.to_move)))
 
         return state.get_outcome()
@@ -92,7 +92,7 @@ class MonteCarlo:
         while time.process_time() - start_time < time_limit:
             node, state = self.select_node()
             outcome = self.roll_out(state)
-            self.back_propagate(node, state.to_play, outcome)
+            self.back_propagate(node, state.to_move, outcome)
             num_rollouts += 1
 
         run_time = time.process_time() - start_time
@@ -100,7 +100,7 @@ class MonteCarlo:
         self.num_rollouts = num_rollouts
 
     def best_move(self):
-        if self.root_state.hasAvailableMoves():
+        if not self.root_state.hasAvailableMoves():
             return -1
 
         max_value = max(self.root.children.values(), key=lambda n: n.N).N
