@@ -95,8 +95,7 @@ def main():
                         highlightedMoves = dict()
                         availableMoves = game.getPossibleMoves(game.to_move)
                         update_display(WINDOW, game.board, selectedPiece, highlightedMoves)
-
-        else:
+        if game.to_move == 'white' and PLAYER_WHITE != 'human' or game.to_move == 'black' and PLAYER_BLACK != 'human':
             start = time.time()
             if len(availableMoves) == 1:
                 move = availableMoves[0]
