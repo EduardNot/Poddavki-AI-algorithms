@@ -99,7 +99,9 @@ def main():
 
             else:
                 start = time.time()
-                if game.to_move == 'white':
+                if len(availableMoves) == 1:
+                    move = availableMoves[0]
+                elif game.to_move == 'white':
                     move = aiTurns[PLAYER_WHITE](game)
                 else:
                     move = aiTurns[PLAYER_BLACK](game)
@@ -121,7 +123,7 @@ def main():
 
 images = {val: pygame.image.load(f'assets/{val}.png') for val in ['b', 'bk', 'w', 'wk', 'move', 'v_border', 'h_border']}
 
-SMALL = True
+SMALL = False
 
 BOARD_SIZE = 640 if SMALL else 880
 BORDER_WIDTH = 40
@@ -135,7 +137,7 @@ pygame.display.set_caption('Checkers')
 
 aiTurns = {'random-ai': randomAiTurn, 'minmax-ai': minMaxTurn, 'monteCarlo-ai': None, 'minmax-ab-ai': None}
 
-PLAYER_WHITE = 'random-ai'
+PLAYER_WHITE = 'minmax-ai'
 PLAYER_BLACK = 'minmax-ai'
 
 main()
