@@ -96,27 +96,27 @@ def main():
                         availableMoves = game.getPossibleMoves(game.to_move)
                         update_display(WINDOW, game.board, selectedPiece, highlightedMoves)
 
+        else:
+            start = time.time()
+            if len(availableMoves) == 1:
+                move = availableMoves[0]
+            elif game.to_move == 'white':
+                move = aiTurns[PLAYER_WHITE](game)
             else:
-                start = time.time()
-                if len(availableMoves) == 1:
-                    move = availableMoves[0]
-                elif game.to_move == 'white':
-                    move = aiTurns[PLAYER_WHITE](game)
-                else:
-                    move = aiTurns[PLAYER_BLACK](game)
-                while time.time() - start < 0.2: pass
-                if len(move) == 8:
-                    for moveList in game.getPossibleMoves(game.to_move):
-                        if move == game.getNextBoardState(moveList):
-                            move = moveList
-                            break
-                if move in availableMoves:
-                    print(game.to_move, game.translateMove(move))
-                    game.applyMove(move)
-                    availableMoves = game.getPossibleMoves(game.to_move)
-                    update_display(WINDOW, game.board, selectedPiece, highlightedMoves)
-                else:
-                    print('invalid move')
+                move = aiTurns[PLAYER_BLACK](game)
+            while time.time() - start < 0.2: pass
+            if len(move) == 8:
+                for moveList in game.getPossibleMoves(game.to_move):
+                    if move == game.getNextBoardState(moveList):
+                        move = moveList
+                        break
+            if move in availableMoves:
+                print(game.to_move, game.translateMove(move))
+                game.applyMove(move)
+                availableMoves = game.getPossibleMoves(game.to_move)
+                update_display(WINDOW, game.board, selectedPiece, highlightedMoves)
+            else:
+                print('invalid move')
     print('Winner:', game.getWinner())
 
 
@@ -137,6 +137,6 @@ pygame.display.set_caption('Checkers')
 aiTurns = {'random-ai': randomAiTurn, 'minmax-ai': minMaxTurn, 'monteCarlo-ai': monteCarloTurn}
 
 PLAYER_WHITE = 'random-ai'
-PLAYER_BLACK = 'monteCarlo-ai'
+PLAYER_BLACK = 'random-ai'
 
 main()
