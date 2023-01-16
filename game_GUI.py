@@ -75,7 +75,7 @@ def main():
     availableMoves = game.getPossibleMoves(game.to_move)
     selectedPiece = None
     highlightedMoves = dict()
-    shouldUpdateBoard = True
+    update_display(WINDOW, game.board, selectedPiece, highlightedMoves)
     while availableMoves:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -88,14 +88,14 @@ def main():
                     if game.to_move == 'white' and piece in ['w', 'wk'] or game.to_move == 'black' and piece in ['b','bk']:
                         selectedPiece = (row, col)
                         highlightedMoves = {move[-1]: move for move in availableMoves if move[0] == selectedPiece}
-                        shouldUpdateBoard = True
+                        update_display(WINDOW, game.board, selectedPiece, highlightedMoves)
                     if (row, col) in highlightedMoves:
                         print(game.to_move, game.translateMove(highlightedMoves[(row, col)]))
                         game.applyMove(highlightedMoves[(row, col)])
                         selectedPiece = None
                         highlightedMoves = dict()
                         availableMoves = game.getPossibleMoves(game.to_move)
-                        shouldUpdateBoard = True
+                        update_display(WINDOW, game.board, selectedPiece, highlightedMoves)
 
             else:
                 start = time.time()
@@ -113,12 +113,9 @@ def main():
                     print(game.to_move, game.translateMove(move))
                     game.applyMove(move)
                     availableMoves = game.getPossibleMoves(game.to_move)
-                    shouldUpdateBoard = True
+                    update_display(WINDOW, game.board, selectedPiece, highlightedMoves)
                 else:
                     print('invalid move')
-        if shouldUpdateBoard:
-            update_display(WINDOW, game.board, selectedPiece, highlightedMoves)
-            shouldUpdateBoard = False
     print('Winner:', game.getWinner())
 
 
@@ -138,7 +135,7 @@ pygame.display.set_caption('Checkers')
 
 aiTurns = {'random-ai': randomAiTurn, 'minmax-ai': minMaxTurn, 'monteCarlo-ai': None, 'minmax-ab-ai': None}
 
-PLAYER_WHITE = 'human'
+PLAYER_WHITE = 'random-ai'
 PLAYER_BLACK = 'minmax-ai'
 
 main()
