@@ -114,8 +114,10 @@ class Poddavki:
         directions = []
         if piece in ['b', 'bk']:
             opponentPieces = ['w', 'wk']
+            friendlyPieces = ['b', 'bk']
         else:
             opponentPieces = ['b', 'bk']
+            friendlyPieces = ['w', 'wk']
         match piece:
             case 'b':
                 locations = [((row + 1, col - 1), (row + 2, col - 2)), ((row + 1, col + 1), (row + 2, col + 2))]
@@ -137,6 +139,8 @@ class Poddavki:
                 enemyPosition = (row + i * r, col + i * c)
                 row_1, col_1 = enemyPosition
                 if self.isInBounds(row_1, col_1):
+                    if board[row_1][col_1] in friendlyPieces:
+                        break
                     if board[row_1][col_1] in opponentPieces:
                         for j in range(i + 1, 7):
                             nextPosition = (row + j * r, col + j * c)
