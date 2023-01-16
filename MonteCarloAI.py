@@ -13,7 +13,7 @@ def getTurn(game: Poddavki):
 
 # https://www.harrycodes.com/blog/monte-carlo-tree-search
 class Node:
-    def __init__(self, move, parent, explore=1):
+    def __init__(self, move, parent, explore=math.sqrt(2)):
         self.move = move
         self.parent = parent
         self.N = 0

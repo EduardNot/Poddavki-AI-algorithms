@@ -4,7 +4,6 @@ from RandomAI import getTurn as randomAiTurn
 from MonteCarloAI import getTurn as monteCarloTurn
 from MiniMaxAI import getTurn as minMaxTurn
 
-
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'  # hide pygame welcome message
 import pygame
 import sys
@@ -75,7 +74,7 @@ def main():
     selectedPiece = None
     highlightedMoves = dict()
     update_display(WINDOW, game.board, selectedPiece, highlightedMoves)
-    while availableMoves:
+    while availableMoves and not game.draw:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 print('EXIT SUCCESSFUL')
@@ -84,7 +83,8 @@ def main():
             if game.to_move == 'white' and PLAYER_WHITE == 'human' or game.to_move == 'black' and PLAYER_BLACK == 'human':
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     row, col, piece = getClickedTile(game.board)
-                    if game.to_move == 'white' and piece in ['w', 'wk'] or game.to_move == 'black' and piece in ['b','bk']:
+                    if game.to_move == 'white' and piece in ['w', 'wk'] or game.to_move == 'black' and piece in ['b',
+                                                                                                                 'bk']:
                         selectedPiece = (row, col)
                         highlightedMoves = {move[-1]: move for move in availableMoves if move[0] == selectedPiece}
                         update_display(WINDOW, game.board, selectedPiece, highlightedMoves)

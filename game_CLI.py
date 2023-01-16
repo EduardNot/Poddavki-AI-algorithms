@@ -3,10 +3,11 @@ from RandomAI import getTurn as randomAiTurn
 from MonteCarloAI import getTurn as monteCarloTurn
 from MiniMaxAI import getTurn as minMaxTurn
 
+
 def main():
     game = Poddavki()
     availableMoves = game.getPossibleMoves(game.to_move)
-    while availableMoves:
+    while availableMoves and not game.draw:
         if game.to_move == 'white':
             move = aiTurns[PLAYER_WHITE](game)
         else:

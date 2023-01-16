@@ -15,6 +15,9 @@ class Poddavki:
             ('w', '', 'w', '', 'w', '', 'w', ''),
         )
         self.to_move = 'white'
+        self.white_moves = [[{(-1, -1): '-1'}, {(-1, -1): '-1'}], 0]
+        self.black_moves = [[{(-1, -1): '-1'}, {(-1, -1): '-1'}], 0]
+        self.draw = False
 
     def getBoard(self):
         return copy.deepcopy(self.board)
@@ -46,6 +49,22 @@ class Poddavki:
 
     def applyMove(self, moves):
         self.board = self.getNextBoardState(moves)
+        if self.to_move == 'white':
+            if self.white_moves[0][0] == {moves: self.board[moves[-1][0]][moves[-1][1]]}:
+                self.white_moves[1] += 1
+            else:
+                self.white_moves[1] = 0
+            self.white_moves[0].pop(0)
+            self.white_moves[0].append({moves: self.board[moves[-1][0]][moves[-1][1]]})
+        else:
+            if self.black_moves[0][0] == {moves: self.board[moves[-1][0]][moves[-1][1]]}:
+                self.black_moves[1] += 1
+            else:
+                self.black_moves[1] = 0
+            self.black_moves[0].pop(0)
+            self.black_moves[0].append({moves: self.board[moves[-1][0]][moves[-1][1]]})
+        if self.white_moves[1] >= 2 and self.black_moves[1] >= 2:
+            self.draw = True
         self.switchPlayer()
 
     def getNextBoardState(self, moves):
@@ -211,12 +230,16 @@ class Poddavki:
         return len(availableMoves) > 0
 
     def getWinner(self):
+        if self.draw:
+            return 'draw'
         return self.to_move
 
     def get_outcome(self):
         white = self.getPossibleMoves('white')
         black = self.getPossibleMoves('black')
         if len(white) == 0 and len(black) == 0:
+            return 'draw'
+        if self.draw:
             return 'draw'
 
         return 'white' if len(white) == 0 else 'black'
