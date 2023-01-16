@@ -2,8 +2,13 @@ import math
 import copy
 import random
 import time
-
 from Poddavki import Poddavki
+
+
+def getTurn(game: Poddavki):
+    mcts = MonteCarlo(game)
+    mcts.search(1)
+    return mcts.best_move()
 
 
 # https://www.harrycodes.com/blog/monte-carlo-tree-search

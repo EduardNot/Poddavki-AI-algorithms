@@ -1,8 +1,7 @@
 from Poddavki import Poddavki
 from RandomAI import getTurn as randomAiTurn
-
-# from MonteCarloAI import getTurn as monteCarloTurn
-# from MiniMaxAI import getTurn as minMaxTurn
+from MonteCarloAI import getTurn as monteCarloTurn
+from MiniMaxAI import getTurn as minMaxTurn
 
 def main():
     game = Poddavki()
@@ -26,7 +25,7 @@ def main():
     print('Winner:', game.getWinner())
 
 
-aiTurns = {'random-ai': randomAiTurn, 'minmax-ai': None, 'monteCarlo-ai': None, 'minmax-ab-ai': None}
+aiTurns = {'random-ai': randomAiTurn, 'minmax-ai': minMaxTurn, 'monteCarlo-ai': monteCarloTurn}
 
 PLAYER_WHITE = 'random-ai'
 PLAYER_BLACK = 'random-ai'
