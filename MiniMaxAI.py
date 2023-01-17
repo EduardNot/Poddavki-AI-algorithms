@@ -1,43 +1,50 @@
 import Poddavki
+import time
 
 
 def getTurn(game: Poddavki):
-    return move(game, game.getPlayer(), 4, False)
+    return move(game, game.getPlayer(), 3, False, True)
 
 
 def getTurnAB(game: Poddavki):
-    return move(game, game.getPlayer(), 4, True)
+    turn =  move(game, game.getPlayer(), 4, True, True)
+    return turn
 
 
-def move(game, color, depth, alphabeta):
+def move(game, color, depth, alphabeta, verbose=False):
     colors = ('white', 'black')
-    _, move = minimax(game, True, depth, alphabeta, 0, colors if color == 'white' else colors[::-1])
+    time1 = time.perf_counter()
+    (_, move), c = minimax(game, True, depth, alphabeta, 0, colors if color == 'white' else colors[::-1], 1)
+    total_time = time.perf_counter()-time1
+    if verbose:
+        print(f"Nodes visited: {c}, time elapsed: {total_time}, time per node: {total_time/c}")
     return move
             
 
-def minimax(game, maxPlayer, depth, alphabeta, prevEval, colors):
+def minimax(game, maxPlayer, depth, alphabeta, prevEval, colors, c):
     if depth == 0:
-        return (evaluatePosition(game.getBoard(), colors[0] if maxPlayer else colors[1]), None)
+        return (evaluatePosition(game.getBoard(), colors[0] if maxPlayer else colors[1]), None), c
     if not game.hasAvailableMoves():
-        return (30, None) if maxPlayer else (-30, None)
+        return (30, None) if maxPlayer else (-30, None), c
+    if game.draw:
+        return (0, None), c
 
     best = (-100 if maxPlayer else 100, None)
     moves = game.getPossibleMoves(colors[0] if maxPlayer else colors[1])
-    
+
     for move in moves:
         if alphabeta and (maxPlayer and prevEval <= best[0] or not maxPlayer and prevEval >= best[0]):
             break
 
         gameCopy = game.copyGame()
         gameCopy.applyMove(move)
-        eval = minimax(gameCopy, not maxPlayer, depth if maxPlayer else depth-1, alphabeta, best[0], colors)
+        eval, c = minimax(gameCopy, not maxPlayer, depth if maxPlayer else depth-1, alphabeta, best[0], colors, c+1)
         
         if maxPlayer and best[0] < eval[0]:
             best = (eval[0], move)
         elif not maxPlayer and best[0]  > eval[0]:
             best = (eval[0], move)
-    return best
-
+    return best, c
 
 
 def evaluatePosition(board, playerColor):
@@ -60,3 +67,4 @@ def evaluatePosition(board, playerColor):
         return blackTotal - whiteTotal
     else:
         return whiteTotal - blackTotal
+    

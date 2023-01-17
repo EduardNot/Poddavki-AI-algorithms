@@ -19,23 +19,27 @@ class Poddavki:
         self.black_moves = [[{(-1, -1): '-1'}, {(-1, -1): '-1'}], 0]
         self.draw = False
 
+
     def getBoard(self):
         return copy.deepcopy(self.board)
+
 
     def getPieceLocations(self, type='all'):
         positions = []
         for row, rowValues in enumerate(self.board):
             for col, piece in enumerate(rowValues):
-                if type == 'all' and piece in ['b', 'bk', 'w', 'wk']:
+                if type == 'all' and piece in ('b', 'bk', 'w', 'wk'):
                     positions.append((row, col))
-                elif type == 'white' and piece in ['w', 'wk']:
+                elif type == 'white' and piece in ('w', 'wk'):
                     positions.append((row, col))
-                elif type == 'black' and piece in ['b', 'bk']:
+                elif type == 'black' and piece in ('b', 'bk'):
                     positions.append((row, col))
         return positions
 
+
     def getPlayer(self):
         return self.to_move
+
 
     def copyGame(self):
         new_game = Poddavki()
@@ -46,6 +50,7 @@ class Poddavki:
     @staticmethod
     def isInBounds(row, col):
         return 0 <= row <= 7 and 0 <= col <= 7
+
 
     def applyMove(self, moves):
         self.board = self.getNextBoardState(moves)
@@ -67,6 +72,7 @@ class Poddavki:
             self.draw = True
         self.switchPlayer()
 
+
     def getNextBoardState(self, moves):
         new_board = [[*row] for row in self.board]
         start_row, start_col = moves[0]
@@ -82,6 +88,7 @@ class Poddavki:
 
         new_board[end_row][end_col] = piece
         return tuple(map(tuple, new_board))
+
 
     def getRegularMoves(self, row, col):
         moves = []
@@ -110,8 +117,10 @@ class Poddavki:
                     break
         return possibleMoves
 
+
     def printBoard(self):
         print(tabulate(self.board))
+
 
     @staticmethod
     def translateMove(move):
@@ -126,24 +135,25 @@ class Poddavki:
                 result += f'{colMove[col]}{rowMove[row]}:'
         return result[:-1]
 
+
     def getNextSkips(self, board, row, col):
         startPosition = (row, col)
         piece = board[row][col]
-        locations = []
-        directions = []
-        if piece in ['b', 'bk']:
-            opponentPieces = ['w', 'wk']
-            friendlyPieces = ['b', 'bk']
+        locations = ()
+        directions = ()
+        if piece in ('b', 'bk'):
+            opponentPieces = ('w', 'wk')
+            friendlyPieces = ('b', 'bk')
         else:
-            opponentPieces = ['b', 'bk']
-            friendlyPieces = ['w', 'wk']
+            opponentPieces = ('b', 'bk')
+            friendlyPieces = ('w', 'wk')
         match piece:
             case 'b':
-                locations = [((row + 1, col - 1), (row + 2, col - 2)), ((row + 1, col + 1), (row + 2, col + 2))]
+                locations = (((row + 1, col - 1), (row + 2, col - 2)), ((row + 1, col + 1), (row + 2, col + 2)))
             case 'w':
-                locations = [((row - 1, col + 1), (row - 2, col + 2)), ((row - 1, col - 1), (row - 2, col - 2))]
+                locations = (((row - 1, col + 1), (row - 2, col + 2)), ((row - 1, col - 1), (row - 2, col - 2)))
             case 'wk' | 'bk':
-                directions = [(-1, 1), (1, 1), (1, -1), (-1, -1)]
+                directions = ((-1, 1), (1, 1), (1, -1), (-1, -1))
         skipMoves = []
 
         for enemyPosition, nextPosition in locations:
@@ -176,6 +186,7 @@ class Poddavki:
                     break  # out of bounds
         return skipMoves
 
+
     def getSkips(self, row, col):
         possibleMoves = []
 
@@ -190,28 +201,29 @@ class Poddavki:
                 possibleMoves.append(move)
         return possibleMoves
 
+
     def getPossibleMoves(self, player):
         availableMoves = []
         if player == 'white':
-            pieces = ['w', 'wk']
+            pieces = ('w', 'wk')
         else:
-            pieces = ['b', 'bk']
+            pieces = ('b', 'bk')
+
         for row, rowValues in enumerate(self.board):
             for col, piece in enumerate(rowValues):
                 if piece in pieces:
-                    moveList = self.getSkips(row, col)
-                    if moveList:
-                        for move in moveList:
-                            availableMoves.append(move)
-        if not availableMoves:
-            for row, rowValues in enumerate(self.board):
-                for col, piece in enumerate(rowValues):
-                    if piece in pieces:
-                        moveList = self.getRegularMoves(row, col)
-                        if moveList:
-                            for move in moveList:
-                                availableMoves.append(move)
+                    availableMoves.extend(self.getSkips(row, col))
+
+        if availableMoves:
+            return availableMoves
+
+        for row, rowValues in enumerate(self.board):
+            for col, piece in enumerate(rowValues):
+                if piece in pieces:
+                    availableMoves.extend(self.getRegularMoves(row, col))
+
         return availableMoves
+
 
     def getPossibleBoardStates(self, player):
         boardStates = []
@@ -219,20 +231,24 @@ class Poddavki:
             boardStates.append(self.getNextBoardState(move))
         return boardStates
 
+
     def switchPlayer(self):
         if self.to_move == 'white':
             self.to_move = 'black'
         else:
             self.to_move = 'white'
 
+
     def hasAvailableMoves(self):
         availableMoves = self.getPossibleMoves(self.to_move)
         return len(availableMoves) > 0
+
 
     def getWinner(self):
         if self.draw:
             return 'draw'
         return self.to_move
+
 
     def get_outcome(self):
         white = self.getPossibleMoves('white')
