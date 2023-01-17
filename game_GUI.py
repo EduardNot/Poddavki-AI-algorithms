@@ -71,6 +71,7 @@ def main():
     WINDOW.blit(h_border, (BOARD_SIZE - BORDER_WIDTH, 0))
 
     game = Poddavki()
+    print(f'(white) {PLAYER_WHITE} vs {PLAYER_BLACK} (black)')
     availableMoves = game.getPossibleMoves(game.to_move)
     selectedPiece = None
     highlightedMoves = dict()

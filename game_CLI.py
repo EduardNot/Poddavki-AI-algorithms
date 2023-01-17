@@ -7,6 +7,7 @@ from MiniMaxAI import getTurn as minMaxTurn
 def main():
     game = Poddavki()
     availableMoves = game.getPossibleMoves(game.to_move)
+    print(f'(white) {PLAYER_WHITE} vs {PLAYER_BLACK} (black)')
     while availableMoves and not game.draw:
         if game.to_move == 'white':
             move = aiTurns[PLAYER_WHITE](game)
