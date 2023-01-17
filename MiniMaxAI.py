@@ -2,6 +2,10 @@ import Poddavki
 
 
 def getTurn(game: Poddavki):
+    return move(game, game.getPlayer(), 4, False)
+
+
+def getTurnAB(game: Poddavki):
     return move(game, game.getPlayer(), 4, True)
 
 
@@ -33,6 +37,7 @@ def minimax(game, maxPlayer, depth, alphabeta, prevEval, colors):
         elif not maxPlayer and best[0]  > eval[0]:
             best = (eval[0], move)
     return best
+
 
 
 def evaluatePosition(board, playerColor):
