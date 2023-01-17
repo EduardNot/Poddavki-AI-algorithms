@@ -140,6 +140,6 @@ pygame.display.set_caption('Checkers')
 aiTurns = {'random-ai': randomAiTurn, 'minimax-ai': minMaxTurn, 'minimaxab-ai': minMaxABTurn, 'monteCarlo-ai': monteCarloTurn}
 
 PLAYER_WHITE = 'minimaxab-ai'
-PLAYER_BLACK = 'minimax-ai'
+PLAYER_BLACK = 'minimaxab-ai'
 
 main()
