@@ -105,9 +105,6 @@ class MonteCarlo:
         self.num_rollouts = num_rollouts
 
     def best_move(self):
-        if not self.root_state.hasAvailableMoves():
-            return -1
-
         max_value = max(self.root.children.values(), key=lambda n: n.N).N
         max_nodes = [n for n in self.root.children.values() if n.N == max_value]
         best_child = random.choice(max_nodes)

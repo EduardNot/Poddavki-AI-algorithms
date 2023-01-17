@@ -97,7 +97,9 @@ def main():
                         update_display(WINDOW, game.board, selectedPiece, highlightedMoves)
         if game.to_move == 'white' and PLAYER_WHITE != 'human' or game.to_move == 'black' and PLAYER_BLACK != 'human':
             start = time.time()
-            if len(availableMoves) == 1:
+            if not availableMoves:
+                break
+            elif len(availableMoves) == 1:
                 move = availableMoves[0]
             elif game.to_move == 'white':
                 move = aiTurns[PLAYER_WHITE](game)
@@ -135,7 +137,7 @@ pygame.display.set_caption('Checkers')
 
 aiTurns = {'random-ai': randomAiTurn, 'minmax-ai': minMaxTurn, 'monteCarlo-ai': monteCarloTurn}
 
-PLAYER_WHITE = 'random-ai'
-PLAYER_BLACK = 'random-ai'
+PLAYER_WHITE = 'monteCarlo-ai'
+PLAYER_BLACK = 'monteCarlo-ai'
 
 main()
