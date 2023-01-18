@@ -70,7 +70,8 @@ class MonteCarlo:
 
         return True
 
-    def roll_out(self, state):
+    def roll_out(self, state_raw):
+        state = copy.deepcopy(state_raw)
         while state.hasAvailableMoves():
             state.applyMove(random.choice(state.getPossibleMoves(state.to_move)))
 
