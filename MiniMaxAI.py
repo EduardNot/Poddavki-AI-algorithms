@@ -15,16 +15,18 @@ def getTurnAB(game: Poddavki):
 def move(game, color, depth, alphabeta, rand, verbose=False):
     colors = ('white', 'black')
     time1 = time.perf_counter()
-    (_, move), c = minimax(game, True, depth, alphabeta, 0, colors if color == 'white' else colors[::-1], rand, 1)
+    (eval, move), c = minimax(game, True, depth, depth, alphabeta, 0, colors if color == 'white' else colors[::-1], rand, 1)
     total_time = time.perf_counter()-time1
     if verbose:
-        print(f"Nodes visited: {c}, time elapsed: {total_time}, time per node: {total_time/c}")
+        print(f"Nodes visited: {c}, time elapsed: {total_time}, time per node: {total_time/c}, eval: {eval}, {move}")
     return move
             
 
-def minimax(game, maxPlayer, depth, alphabeta, prevEval, colors, rand, c):
+def minimax(game, maxPlayer, depth, maxDepth, alphabeta, prevEval, colors, rand, c):
     if depth == 0:
         return (evaluatePosition(game.getBoard(), colors[0] if maxPlayer else colors[1]), None), c
+    if not game.hasAvailableMoves() and (depth == maxDepth or depth == maxDepth-1):
+        return (70, None) if maxPlayer else (-70, None), c
     if not game.hasAvailableMoves():
         return (50, None) if maxPlayer else (-50, None), c
     if game.draw:
@@ -32,12 +34,15 @@ def minimax(game, maxPlayer, depth, alphabeta, prevEval, colors, rand, c):
 
     best = (-100 if maxPlayer else 100, None)
     moves = game.getPossibleMoves(colors[0] if maxPlayer else colors[1])
+
+    if maxPlayer and depth == maxDepth:
+        print(moves)
     
     if rand:
         random.shuffle(moves)
 
     for move in moves:
-        if best[0] == 50:
+        if best[0] == 70:
             break
 
         if alphabeta and (maxPlayer and prevEval <= best[0] or not maxPlayer and prevEval >= best[0]):
@@ -45,7 +50,7 @@ def minimax(game, maxPlayer, depth, alphabeta, prevEval, colors, rand, c):
 
         gameCopy = game.copyGame()
         gameCopy.applyMove(move)
-        eval, c = minimax(gameCopy, not maxPlayer, depth if maxPlayer else depth-1, alphabeta, best[0], colors, rand, c+1)
+        eval, c = minimax(gameCopy, not maxPlayer, depth if maxPlayer else depth-1, maxDepth, alphabeta, best[0], colors, rand, c+1)
         
         if maxPlayer and best[0] < eval[0]:
             best = (eval[0], move)
@@ -55,7 +60,7 @@ def minimax(game, maxPlayer, depth, alphabeta, prevEval, colors, rand, c):
 
 
 def evaluatePosition(board, playerColor):
-    KING_VALUE = 0.5
+    KING_VALUE = 0
     whiteTotal = 0
     blackTotal = 0
     for rowValues in board:
