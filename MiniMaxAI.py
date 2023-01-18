@@ -18,7 +18,7 @@ def move(game, color, depth, alphabeta, rand, verbose=False):
     (eval, move), c = minimax(game, True, depth, depth, alphabeta, 0, colors if color == 'white' else colors[::-1], rand, 1)
     total_time = time.perf_counter()-time1
     if verbose:
-        print(f"Nodes visited: {c}, time elapsed: {total_time}, time per node: {total_time/c}, eval: {eval}, {move}")
+        print(f"Nodes visited: {c}, time elapsed: {total_time}, time per node: {total_time/c}, eval: {eval}")
     return move
             
 
@@ -34,9 +34,6 @@ def minimax(game, maxPlayer, depth, maxDepth, alphabeta, prevEval, colors, rand,
 
     best = (-100 if maxPlayer else 100, None)
     moves = game.getPossibleMoves(colors[0] if maxPlayer else colors[1])
-
-    if maxPlayer and depth == maxDepth:
-        print(moves)
     
     if rand:
         random.shuffle(moves)
@@ -45,7 +42,7 @@ def minimax(game, maxPlayer, depth, maxDepth, alphabeta, prevEval, colors, rand,
         if best[0] == 70:
             break
 
-        if alphabeta and (maxPlayer and prevEval <= best[0] or not maxPlayer and prevEval >= best[0]):
+        if alphabeta and (maxPlayer and prevEval >= best[0] or not maxPlayer and prevEval <= best[0]):
             break
 
         gameCopy = game.copyGame()

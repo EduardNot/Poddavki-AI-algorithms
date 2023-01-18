@@ -15,6 +15,7 @@ class Poddavki:
             ('w', '', 'w', '', 'w', '', 'w', ''),
         )
 
+
         self.to_move = 'white'
         self.white_moves = [[{(-1, -1): '-1'}, {(-1, -1): '-1'}], 0]
         self.black_moves = [[{(-1, -1): '-1'}, {(-1, -1): '-1'}], 0]
