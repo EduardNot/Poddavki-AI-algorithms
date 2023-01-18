@@ -6,7 +6,7 @@ import random
 
 
 def getTurn(game: Poddavki):
-    return move(game, game.getPlayer(), 3, False, True, True)
+    return move(game, game.getPlayer(), 6, False, True, True)
 
 
 def getTurnAB(game: Poddavki):
@@ -19,18 +19,20 @@ def move(game, color, depth, alphabeta, rand, verbose=False):
     time1 = time.perf_counter()
     if alphabeta:
         (eval, move), c = alpha_beta(game, True, 0, depth, -math.inf, math.inf,
-                                  colors if color == 'white' else colors[::-1],
-                                  rand, 1)
+                                     colors if color == 'white' else colors[::-1],
+                                     rand, 1)
     else:
-        (eval, move), c = minimax(game, True, depth, depth, alphabeta, 0, colors if color == 'white' else colors[::-1],
+        (eval, move), c = minimax(game, True, 0, depth, colors if color == 'white' else colors[::-1],
                                   rand, 1)
+        # (eval, move), c = minimax(game, True, depth, depth, alphabeta, 0, colors if color == 'white' else colors[::-1],
+        #                           rand, 1)
     total_time = time.perf_counter() - time1
     if verbose:
         print(f"Nodes visited: {c}, time elapsed: {total_time}, time per node: {total_time / c}, eval: {eval}")
     return move
 
 
-def minimax(game, maxPlayer, depth, maxDepth, alphabeta, prevEval, colors, rand, c):
+def alt_minimax(game, maxPlayer, depth, maxDepth, alphabeta, prevEval, colors, rand, c):
     if depth == 0:
         return (evaluatePosition(game.getBoard(), colors[0] if maxPlayer else colors[1]), None), c
     if not game.hasAvailableMoves() and (depth == maxDepth or depth == maxDepth - 1):
@@ -55,14 +57,49 @@ def minimax(game, maxPlayer, depth, maxDepth, alphabeta, prevEval, colors, rand,
 
         gameCopy = game.copyGame()
         gameCopy.applyMove(move)
-        eval, c = minimax(gameCopy, not maxPlayer, depth if maxPlayer else depth - 1, maxDepth, alphabeta, best[0],
-                          colors, rand, c + 1)
+        eval, c = alt_minimax(gameCopy, not maxPlayer, depth if maxPlayer else depth - 1, maxDepth, alphabeta, best[0],
+                              colors, rand, c + 1)
 
         if maxPlayer and best[0] < eval[0]:
             best = (eval[0], move)
         elif not maxPlayer and best[0] > eval[0]:
             best = (eval[0], move)
     return best, c
+
+
+def minimax(game, maxPlayer, depth, maxDepth, colors, rand, c):
+    if depth == maxDepth:
+        if maxPlayer:
+            return (evaluatePosition(game.getBoard(), colors[0] if maxPlayer else colors[1]) - depth, None), c
+        else:
+            return (-evaluatePosition(game.getBoard(), colors[0] if maxPlayer else colors[1]) + depth, None), c
+    if not game.hasAvailableMoves():
+        return (50 - depth, None) if maxPlayer else (-50 + depth, None), c
+    if game.draw:
+        return 0, None
+
+    best = (-100 if maxPlayer else 100, None)
+    moves = game.getPossibleMoves(colors[0] if maxPlayer else colors[1])
+
+    if rand:
+        random.shuffle(moves)
+
+    if maxPlayer:
+        for move in moves:
+            gameCopy = game.copyGame()
+            gameCopy.applyMove(move)
+            score, c = minimax(gameCopy, not maxPlayer, depth + 1, maxDepth, colors, rand, c + 1)
+            if score[0] > best[0]:
+                best = (score[0], move)
+        return best, c
+    else:
+        for move in moves:
+            gameCopy = game.copyGame()
+            gameCopy.applyMove(move)
+            score, c = minimax(gameCopy, not maxPlayer, depth + 1, maxDepth,  colors, rand, c + 1)
+            if score[0] < best[0]:
+                best = (score[0], move)
+        return best, c
 
 
 def alpha_beta(game, maxPlayer, depth, maxDepth, alpha, beta, colors, rand, c):
@@ -86,7 +123,7 @@ def alpha_beta(game, maxPlayer, depth, maxDepth, alpha, beta, colors, rand, c):
         for move in moves:
             gameCopy = game.copyGame()
             gameCopy.applyMove(move)
-            score, c = alpha_beta(gameCopy, not maxPlayer, depth + 1, maxDepth, alpha, beta, colors, rand, c+1)
+            score, c = alpha_beta(gameCopy, not maxPlayer, depth + 1, maxDepth, alpha, beta, colors, rand, c + 1)
             if score[0] > best[0]:
                 best = (score[0], move)
             if best[0] > beta:
@@ -97,7 +134,7 @@ def alpha_beta(game, maxPlayer, depth, maxDepth, alpha, beta, colors, rand, c):
         for move in moves:
             gameCopy = game.copyGame()
             gameCopy.applyMove(move)
-            score, c = alpha_beta(gameCopy, not maxPlayer, depth + 1, maxDepth, alpha, beta, colors, rand, c+1)
+            score, c = alpha_beta(gameCopy, not maxPlayer, depth + 1, maxDepth, alpha, beta, colors, rand, c + 1)
             if score[0] < best[0]:
                 best = (score[0], move)
             if best[0] < alpha:
