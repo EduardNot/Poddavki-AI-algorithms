@@ -6,11 +6,11 @@ import random
 
 
 def getTurn(game: Poddavki):
-    return move(game, game.getPlayer(), 6, False, True, True)
+    return move(game, game.getPlayer(), 6, False, True)
 
 
 def getTurnAB(game: Poddavki):
-    turn = move(game, game.getPlayer(), 7, True, True, True)
+    turn = move(game, game.getPlayer(), 7, True, True)
     return turn
 
 

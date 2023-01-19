@@ -61,7 +61,9 @@ def getClickedTile(board):
         return 'border', 'border', 'border'
 
 
-def main():
+def main(PLAYER_WHITE, PLAYER_BLACK):
+    aiTurns = {'random-ai': randomAiTurn, 'minimax-ai': minMaxTurn, 'minimaxab-ai': minMaxABTurn,
+               'monteCarlo-ai': monteCarloTurn}
     v_border = pygame.transform.scale(images['v_border'], (640, 40)) if SMALL else images['v_border']
     h_border = pygame.transform.scale(images['h_border'], (40, 640)) if SMALL else images['h_border']
 
@@ -120,12 +122,19 @@ def main():
                 update_display(WINDOW, game.board, selectedPiece, highlightedMoves)
             else:
                 print('invalid move')
-    print('Winner:', game.getWinner())
+    winner = game.getWinner()
+    print(f'(white) {PLAYER_WHITE} vs {PLAYER_BLACK} (black)')
+    if winner == 'white':
+        print(f'Winner: {PLAYER_WHITE}')
+    elif winner == 'black':
+        print(f'Winner: {PLAYER_BLACK}')
+    else:
+        print('Draw')
 
 
 images = {val: pygame.image.load(f'assets/{val}.png') for val in ['b', 'bk', 'w', 'wk', 'move', 'v_border', 'h_border']}
 
-SMALL = True
+SMALL = False
 
 BOARD_SIZE = 640 if SMALL else 880
 BORDER_WIDTH = 40
@@ -136,10 +145,3 @@ TILE_WIDTH = 70 if SMALL else 100
 pygame.init()
 WINDOW = pygame.display.set_mode((BOARD_SIZE, BOARD_SIZE))
 pygame.display.set_caption('Checkers')
-
-aiTurns = {'random-ai': randomAiTurn, 'minimax-ai': minMaxTurn, 'minimaxab-ai': minMaxABTurn, 'monteCarlo-ai': monteCarloTurn}
-
-PLAYER_WHITE = 'minimax-ai'
-PLAYER_BLACK = 'monteCarlo-ai'
-
-main()

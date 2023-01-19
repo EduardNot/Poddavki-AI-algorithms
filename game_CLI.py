@@ -4,7 +4,8 @@ from MonteCarloAI import getTurn as monteCarloTurn
 from MiniMaxAI import getTurn as minMaxTurn
 
 
-def main():
+def main(PLAYER_WHITE, PLAYER_BLACK):
+    aiTurns = {'random-ai': randomAiTurn, 'minmax-ai': minMaxTurn, 'monteCarlo-ai': monteCarloTurn}
     game = Poddavki()
     availableMoves = game.getPossibleMoves(game.to_move)
     print(f'(white) {PLAYER_WHITE} vs {PLAYER_BLACK} (black)')
@@ -24,12 +25,12 @@ def main():
             availableMoves = game.getPossibleMoves(game.to_move)
         else:
             print('invalid move')
-    print('Winner:', game.getWinner())
+    winner = game.getWinner()
+    print(f'(white) {PLAYER_WHITE} vs {PLAYER_BLACK} (black)')
+    if winner == 'white':
+        print(f'Winner: {PLAYER_WHITE}')
+    elif winner == 'black':
+        print(f'Winner: {PLAYER_BLACK}')
+    else:
+        print('Draw')
 
-
-aiTurns = {'random-ai': randomAiTurn, 'minmax-ai': minMaxTurn, 'monteCarlo-ai': monteCarloTurn}
-
-PLAYER_WHITE = 'random-ai'
-PLAYER_BLACK = 'random-ai'
-
-main()
