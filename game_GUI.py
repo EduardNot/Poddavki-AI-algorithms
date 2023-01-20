@@ -24,7 +24,7 @@ def getY(row):
     return BORDER_WIDTH + row * TILE_WIDTH
 
 
-def update_display(WIN, board, selectedPiece, possibleMoves):
+def update_display(WINDOW, board, selectedPiece, possibleMoves):
     white_tile = '#FFCE9E'
     black_tile = '#D18B47'
     highlighted_tile = '#EC4136'
@@ -42,11 +42,11 @@ def update_display(WIN, board, selectedPiece, possibleMoves):
             pygame.draw.rect(WINDOW, color, (x, y, TILE_WIDTH, TILE_WIDTH))
             # show move locations
             if (row, col) in possibleMoves:
-                WIN.blit(pygame.transform.scale(images['move'], (20, 20)) if SMALL else images['move'],
+                WINDOW.blit(pygame.transform.scale(images['move'], (20, 20)) if SMALL else images['move'],
                          (x + OFFSET_MOVE, y + OFFSET_MOVE))
             # add pieces
             if piece in ['w', 'wk', 'b', 'bk']:
-                WIN.blit(pygame.transform.scale(images[piece], (50, 50)) if SMALL else images[piece],
+                WINDOW.blit(pygame.transform.scale(images[piece], (50, 50)) if SMALL else images[piece],
                          (x + OFFSET_PIECE, y + OFFSET_PIECE))
     pygame.display.update()
 
@@ -62,6 +62,10 @@ def getClickedTile(board):
 
 
 def main(PLAYER_WHITE, PLAYER_BLACK):
+    pygame.init()
+    WINDOW = pygame.display.set_mode((BOARD_SIZE, BOARD_SIZE))
+    pygame.display.set_caption('Checkers')
+
     aiTurns = {'random-ai': randomAiTurn, 'minimax-ai': minMaxTurn, 'minimaxab-ai': minMaxABTurn,
                'monteCarlo-ai': monteCarloTurn}
     v_border = pygame.transform.scale(images['v_border'], (640, 40)) if SMALL else images['v_border']
@@ -141,7 +145,3 @@ BORDER_WIDTH = 40
 OFFSET_PIECE = 10
 OFFSET_MOVE = 25 if SMALL else 35
 TILE_WIDTH = 70 if SMALL else 100
-
-pygame.init()
-WINDOW = pygame.display.set_mode((BOARD_SIZE, BOARD_SIZE))
-pygame.display.set_caption('Checkers')

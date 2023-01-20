@@ -2,10 +2,12 @@ from Poddavki import Poddavki
 from RandomAI import getTurn as randomAiTurn
 from MonteCarloAI import getTurn as monteCarloTurn
 from MiniMaxAI import getTurn as minMaxTurn
+from MiniMaxAI import getTurnAB as minMaxABTurn
 
 
 def main(PLAYER_WHITE, PLAYER_BLACK):
-    aiTurns = {'random-ai': randomAiTurn, 'minmax-ai': minMaxTurn, 'monteCarlo-ai': monteCarloTurn}
+    aiTurns = {'random-ai': randomAiTurn, 'minimax-ai': minMaxTurn, 'minimaxab-ai': minMaxABTurn,
+               'monteCarlo-ai': monteCarloTurn}
     game = Poddavki()
     availableMoves = game.getPossibleMoves(game.to_move)
     print(f'(white) {PLAYER_WHITE} vs {PLAYER_BLACK} (black)')

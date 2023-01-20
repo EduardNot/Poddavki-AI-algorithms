@@ -17,7 +17,7 @@ class PlayerType(Enum):
 
 
 # These values should be changed
-selectedGameType = Board.GUI
+selectedGameType = Board.CLI
 playerWhite = PlayerType.RandomAI
 playerBlack = PlayerType.MiniMaxAlphaBetaAI
 # Launch the game
