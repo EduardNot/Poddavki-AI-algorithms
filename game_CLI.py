@@ -10,7 +10,9 @@ def main(PLAYER_WHITE, PLAYER_BLACK):
     availableMoves = game.getPossibleMoves(game.to_move)
     print(f'(white) {PLAYER_WHITE} vs {PLAYER_BLACK} (black)')
     while availableMoves and not game.draw:
-        if game.to_move == 'white':
+        if len(availableMoves) == 1:
+            move = availableMoves[0]
+        elif game.to_move == 'white':
             move = aiTurns[PLAYER_WHITE](game)
         else:
             move = aiTurns[PLAYER_BLACK](game)
